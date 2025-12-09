@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-// Version: 9.0.0 (Clean & Hierarchy Focus)
+// Version: 9.0.1 (Fix Layout & Content)
 
 const faqList = [
   { q: "Xét nghiệm ký sinh trùng ở đâu?", a: "Liên hệ Diag để được tư vấn các chi nhánh gần nhất và đặt lịch xét nghiệm." },
@@ -35,9 +35,8 @@ function App() {
               Bật mí nội dung cẩm nang Doctor DIAG mang đến góc nhìn dễ hiểu và sinh động về ký sinh trùng, và những rủi ro đang hiện hữu quanh bạn và gia đình.
             </p>
             
-            {/* Benefits & Audience - Clean Layout */}
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', marginBottom: '40px', textAlign: 'left', marginTop:'30px'}}>
-               {/* Audience */}
+            {/* Audience */}
+            <div style={{marginTop:'30px', textAlign:'left'}}>
                <div className="card-minimal" style={{borderLeft:'4px solid #0ea5e9'}}>
                    <h4 style={{marginBottom: '15px', color:'#0284c7'}}>Cẩm nang này dành riêng cho ai?</h4>
                    <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
@@ -49,7 +48,7 @@ function App() {
                </div>
             </div>
             
-            <button onClick={() => scrollToSection('phan-1')} className="btn-cta">
+            <button onClick={() => scrollToSection('phan-1')} className="btn-cta" style={{marginTop: '30px'}}>
               BẮT ĐẦU TÌM HIỂU
             </button>
           </div>
@@ -66,7 +65,7 @@ function App() {
             <h2 className="section-title">TỔNG QUAN<br/>VỀ BỆNH</h2>
         </div>
 
-        {/* Stats - Boxed for Emphasis */}
+        {/* Stats */}
         <div className="infographic-row">
           <div style={{flex:1, textAlign:'center'}}>
             <div className="visual-big">1.5<small> TỶ</small></div>
@@ -78,13 +77,13 @@ function App() {
                <li>~20 nghìn người nhiễm giun chó mèo/năm VN.</li>
                <li>42% trẻ em 2-5 tuổi nhiễm giun sán.</li>
                <li style={{gridColumn: '1 / span 2', borderTop:'1px dashed #cbd5e1', paddingTop:'10px'}}>
-                   <strong>Fact:</strong> Khoảng 70 - 80% chúng ta nhiễm ít nhất một loại giun nào đó.
+                   <div className="fact-box"><strong>Fact:</strong> Khoảng 70 - 80% chúng ta nhiễm ít nhất một loại giun nào đó.</div>
                </li>
             </ul>
           </div>
         </div>
 
-        {/* Risk Groups - UNBOXED Clean Grid */}
+        {/* Risk Groups */}
         <div className="card-comic" style={{marginBottom:'60px'}}>
             <h3 className="text-center" style={{marginBottom:'30px'}}>ĐỐI TƯỢNG NGUY CƠ</h3>
             <div className="risk-grid" style={{marginBottom:0}}>
@@ -114,7 +113,7 @@ function App() {
                     <p style={{fontSize:'0.9rem', color:'#64748b', margin:0}}>Nông dân, thu gom rác, công nhân vệ sinh, nông-ngư nghiệp.</p>
                 </div>
                 <div className="risk-item" style={{textAlign:'left'}}>
-                    <div style={{fontSize:'1.8rem', marginBottom:'5px'}}> unclean </div>
+                    <div style={{fontSize:'1.8rem', marginBottom:'5px'}}>🚽</div>
                     <h4 style={{margin:'0 0 5px 0'}}>Vệ sinh kém</h4>
                     <p style={{fontSize:'0.9rem', color:'#64748b', margin:0}}>Ở nơi thiếu nước sạch, hệ thống vệ sinh kém/ô nhiễm cao.</p>
                 </div>
@@ -126,7 +125,7 @@ function App() {
             </div>
         </div>
 
-        {/* Classification - Minimal Grid */}
+        {/* Classification */}
         <div style={{marginBottom:'60px'}}>
            <div className="text-center" style={{marginBottom:'30px'}}>
                <h3>PHÂN LOẠI KÝ SINH TRÙNG</h3>
@@ -152,10 +151,11 @@ function App() {
            </div>
         </div>
 
-        {/* Danger & Curability - Boxed for Impact */}
-        <div style={{position: 'relative', zIndex: 2, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginBottom:'60px'}}>
-             <div className="card-comic" style={{borderColor: '#ef4444', margin:0}}>
-                <h3 style={{color: '#dc2626'}}>🚨 MỨC ĐỘ NGUY HIỂM</h3>
+        {/* Danger & Curability */}
+        <div className="balance-grid">
+             <div className="balance-card danger">
+                <div className="balance-icon" style={{fontSize:'3rem'}}>🚨</div>
+                <h3 style={{color: '#dc2626'}}>MỨC ĐỘ NGUY HIỂM</h3>
                 <ul style={{paddingLeft: '20px', fontSize:'0.95rem', lineHeight:'1.6', listStyle:'disc'}}>
                    <li>Suy dinh dưỡng, thiếu máu trầm trọng.</li>
                    <li>Tổn thương nội tạng: Gan, Phổi, Não.</li>
@@ -164,10 +164,11 @@ function App() {
                 </ul>
              </div>
              
-             <div className="card-comic" style={{borderColor: '#16a34a', margin:0}}>
-                <h3 style={{color: '#16a34a'}}>✅ KHẢ NĂNG CHỮA TRỊ</h3>
+             <div className="balance-card cure">
+                <div className="balance-icon" style={{fontSize:'3rem'}}>✅</div>
+                <h3 style={{color: '#16a34a'}}>KHẢ NĂNG CHỮA TRỊ</h3>
                 <p>Điều trị hiệu quả hoàn toàn nếu phát hiện sớm và dùng đúng phác đồ.</p>
-                <div style={{background: '#fff7ed', padding: '15px', borderRadius: '10px', marginTop: '15px'}}>
+                <div style={{background: '#fff', padding: '15px', borderRadius: '10px', marginTop: '15px', border:'1px dashed #16a34a'}}>
                     <strong style={{color: '#c2410c'}}>⚠️ CẢNH BÁO:</strong>
                     <p style={{margin:0, fontSize: '0.9rem'}}>Tự ý dùng thuốc có thể gây kháng thuốc hoặc hại gan/thận mà không hết bệnh.</p>
                 </div>
@@ -181,35 +182,61 @@ function App() {
             <h2 className="section-title">HIỂU ĐÚNG<br/>VỀ BỆNH</h2>
         </div>
 
-        {/* Nguyên Nhân & Quá Trình Gây Bệnh */}
+        {/* Causes & Process */}
         <div className="card-comic" style={{marginBottom:'60px'}}>
             <h3 className="text-center" style={{marginBottom:'30px'}}>NGUYÊN NHÂN & QUÁ TRÌNH GÂY BỆNH</h3>
-            <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'30px', marginBottom:'30px'}}>
-                <div>
-                    <h4>🔍 NGUYÊN NHÂN LÂY NHIỄM:</h4>
-                    <ul style={{listStyle:'disc', paddingLeft:'20px', fontSize:'0.95rem', lineHeight:'1.6'}}>
-                        <li>Thực phẩm và nước uống nhiễm bẩn.</li>
-                        <li>Vệ sinh cá nhân và môi trường kém.</li>
-                        <li>Tiếp xúc với đất, cát hoặc bề mặt nhiễm mầm bệnh.</li>
-                        <li>Muỗi, côn trùng và động vật truyền bệnh.</li>
-                    </ul>
+            
+            <div style={{marginBottom:'40px'}}>
+                <h4>🔍 NGUYÊN NHÂN LÂY NHIỄM:</h4>
+                <div style={{display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:'15px', textAlign:'center', marginTop:'15px'}}>
+                    <div className="grid-item-clean">
+                        <div style={{fontSize:'2rem'}}>💧</div>
+                        <span style={{fontSize:'0.9rem'}}>Thực phẩm/Nước bẩn</span>
+                    </div>
+                    <div className="grid-item-clean">
+                        <div style={{fontSize:'2rem'}}>🚽</div>
+                        <span style={{fontSize:'0.9rem'}}>Vệ sinh kém</span>
+                    </div>
+                    <div className="grid-item-clean">
+                        <div style={{fontSize:'2rem'}}>🏜️</div>
+                        <span style={{fontSize:'0.9rem'}}>Đất/Cát nhiễm bệnh</span>
+                    </div>
+                    <div className="grid-item-clean">
+                        <div style={{fontSize:'2rem'}}>🦟</div>
+                        <span style={{fontSize:'0.9rem'}}>Côn trùng truyền bệnh</span>
+                    </div>
                 </div>
-                <div>
-                    <h4>🔄 QUÁ TRÌNH GÂY BỆNH:</h4>
-                    <ul style={{listStyle:'none', paddingLeft:0, fontSize:'0.95rem', lineHeight:'1.8'}}>
-                        <li><strong>Nguồn mầm bệnh:</strong> Đất – nước – thực phẩm – thú nuôi – vật dụng (trứng/ấu trùng).</li>
-                        <li><strong>Con đường xâm nhập:</strong> Tiêu hoá • Qua da • Thú nuôi • Vật dụng/da.</li>
-                        <li><strong>Xâm nhập cơ thể:</strong> Vượt hàng rào bảo vệ • Định cư ruột/mô.</li>
-                        <li><strong>Phát triển & sinh sản:</strong> Trứng → Ấu trùng → Trưởng thành • Gây viêm.</li>
-                        <li><strong>Gây bệnh:</strong> Thiếu máu • Suy dinh dưỡng • Tổn thương cơ quan.</li>
-                        <li><strong>Thải ra môi trường:</strong> Trứng/ấu trùng theo phân – nước → tái lây nhiễm.</li>
-                    </ul>
+            </div>
+
+            <div>
+                <h4>🔄 QUÁ TRÌNH GÂY BỆNH:</h4>
+                <div className="process-flow">
+                    <div className="process-step">
+                        <div className="process-number">1</div>
+                        <strong>Nguồn bệnh</strong>
+                        <p style={{fontSize:'0.85rem', margin:0}}>Đất, nước, thực phẩm, thú nuôi (trứng/ấu trùng).</p>
+                    </div>
+                    <div className="process-step">
+                        <div className="process-number">2</div>
+                        <strong>Xâm nhập</strong>
+                        <p style={{fontSize:'0.85rem', margin:0}}>Qua đường tiêu hoá hoặc xuyên qua da.</p>
+                    </div>
+                    <div className="process-step">
+                        <div className="process-number">3</div>
+                        <strong>Phát triển</strong>
+                        <p style={{fontSize:'0.85rem', margin:0}}>Di chuyển trong cơ thể, trưởng thành, gây viêm.</p>
+                    </div>
+                    <div className="process-step">
+                        <div className="process-number">4</div>
+                        <strong>Gây hại</strong>
+                        <p style={{fontSize:'0.85rem', margin:0}}>Thiếu máu, suy dinh dưỡng, tổn thương tạng.</p>
+                    </div>
                 </div>
             </div>
         </div>
         
 
-        {/* MYTHS VS FACTS - Grid Cards */}
+        {/* Myths */}
         <div style={{position: 'relative', zIndex: 2, marginBottom:'60px'}}>
            <h3 className="text-center" style={{marginBottom: '30px', fontSize: '1.8rem'}}>NHỮNG HIỂU LẦM VỀ BỆNH</h3>
            <div className="myth-grid">
@@ -246,7 +273,7 @@ function App() {
             <h2 className="section-title">NHẬN DIỆN<br/>DẤU HIỆU</h2>
         </div>
 
-        {/* SYMPTOMS - Clean List Layout */}
+        {/* Symptoms */}
         <div style={{marginBottom: '60px'}}>
             <div className="card-comic" style={{textAlign:'left'}}>
                 <h3 className="text-center" style={{color:'#ea580c', marginBottom:'30px'}}>DẤU HIỆU NHIỄM KÝ SINH TRÙNG</h3>
@@ -289,7 +316,7 @@ function App() {
             </div>
         </div>
 
-        {/* VS COMPARISON - Clean */}
+        {/* VS Comparison */}
         <div style={{marginBottom: '60px'}}>
            <div className="card-comic">
                 <h3 className="text-center" style={{marginBottom:'20px'}}>CÁCH PHÂN BIỆT VỚI DỊ ỨNG / RỐI LOẠN TIÊU HÓA</h3>
@@ -316,7 +343,7 @@ function App() {
            </div>
         </div>
 
-        {/* DIAGNOSIS - Updated Content */}
+        {/* Diagnosis */}
         <div style={{marginBottom: '60px'}}>
            <div className="text-center" style={{marginBottom:'30px'}}>
               <h3>CÁCH XÉT NGHIỆM</h3>
@@ -357,10 +384,19 @@ function App() {
 
            <div className="card-comic" style={{marginTop: '30px', padding: '20px'}}>
                 <h4 className="text-center" style={{fontSize:'1.2rem', marginBottom:'15px'}}>CÁCH ĐỌC KẾT QUẢ XÉT NGHIỆM</h4>
-                <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', justifyContent: 'center', fontSize:'0.95rem', textAlign:'center'}}>
-                    <div><span style={{color: '#16a34a', fontWeight: 'bold'}}>Dương tính:</span> Xác nhận có KST hoặc dấu ấn đặc hiệu. Bác sĩ dựa vào lâm sàng để đánh giá mức độ và chỉ định điều trị.</div>
-                    <div><span style={{color: '#dc2626', fontWeight: 'bold'}}>Âm tính:</span> Chưa phát hiện KST nhưng không loại trừ hoàn toàn. Có thể cần lặp lại hoặc dùng xét nghiệm chuyên sâu nếu vẫn nghi ngờ.</div>
-                    <div><span style={{color: '#ca8a04', fontWeight: 'bold'}}>Nghi ngờ:</span> Tín hiệu không đủ rõ để kết luận. Bệnh nhân sẽ được xét nghiệm bổ sung hoặc theo dõi lại để xác định chính xác.</div>
+                <div className="result-grid">
+                    <div className="result-card result-pos">
+                        <span style={{color: '#dc2626', fontWeight: 'bold', fontSize:'1.2rem', display:'block', marginBottom:'5px'}}>Dương tính</span>
+                        <span style={{fontSize:'0.9rem'}}>Xác nhận có KST. Cần điều trị ngay.</span>
+                    </div>
+                    <div className="result-card result-neg">
+                        <span style={{color: '#16a34a', fontWeight: 'bold', fontSize:'1.2rem', display:'block', marginBottom:'5px'}}>Âm tính</span>
+                        <span style={{fontSize:'0.9rem'}}>Chưa phát hiện. Có thể cần lặp lại.</span>
+                    </div>
+                    <div className="result-card result-sus">
+                        <span style={{color: '#ca8a04', fontWeight: 'bold', fontSize:'1.2rem', display:'block', marginBottom:'5px'}}>Nghi ngờ</span>
+                        <span style={{fontSize:'0.9rem'}}>Tín hiệu mờ. Cần xét nghiệm bổ sung.</span>
+                    </div>
                 </div>
            </div>
            
@@ -375,7 +411,7 @@ function App() {
             <h2 className="section-title">KIẾN THỨC<br/>VỀ ĐIỀU TRỊ</h2>
         </div>
 
-        {/* Cách Điều Trị */}
+        {/* Treatment Methods */}
         <div className="card-comic" style={{marginBottom:'60px'}}>
             <h3 className="text-center" style={{marginBottom:'30px'}}>CÁCH ĐIỀU TRỊ</h3>
             <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:'30px'}}>
@@ -398,38 +434,38 @@ function App() {
             </div>
         </div>
 
-        {/* CÁCH LOẠI THUỐC THƯỜNG DÙNG */}
+        {/* Medications */}
         <div className="card-comic" style={{marginBottom:'60px'}}>
             <h3 className="text-center" style={{marginBottom:'30px'}}>CÁCH LOẠI THUỐC THƯỜNG DÙNG</h3>
-            <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:'20px'}}>
-                <div className="card-minimal">
-                    <h4 style={{color:'#0766F7'}}>Albendazole</h4>
-                    <p style={{fontSize:'0.9rem', color:'#334155'}}>Thuốc phổ rộng, hiệu quả với nhiều loại giun và một số bệnh sán mô. Dùng trong giun đũa chó mèo, giun đầu gai, giun lươn, sán dây và một số bệnh sán lá.</p>
+            <div className="med-grid">
+                <div className="med-card">
+                    <div className="med-name">Albendazole</div>
+                    <p style={{fontSize:'0.85rem', color:'#334155', margin:0}}>Hiệu quả với nhiều loại giun và một số sán mô (giun đũa chó mèo, giun đầu gai...).</p>
                 </div>
-                <div className="card-minimal">
-                    <h4 style={{color:'#0766F7'}}>Mebendazole</h4>
-                    <p style={{fontSize:'0.9rem', color:'#334155'}}>Tác dụng chủ yếu trên giun đường ruột như giun đũa, giun tóc, giun kim và giun móc. Thường dùng trong các chiến dịch tẩy giun cộng đồng.</p>
+                <div className="med-card">
+                    <div className="med-name">Mebendazole</div>
+                    <p style={{fontSize:'0.85rem', color:'#334155', margin:0}}>Chủ yếu trên giun đường ruột (đũa, tóc, kim, móc). Dùng trong tẩy giun cộng đồng.</p>
                 </div>
-                <div className="card-minimal">
-                    <h4 style={{color:'#0766F7'}}>Ivermectin</h4>
-                    <p style={{fontSize:'0.9rem', color:'#334155'}}>Hiệu quả cao với giun lươn và một số giun truyền qua da. Là lựa chọn ưu tiên khi nghi ngờ giun lươn lan rộng hoặc bệnh nhân có yếu tố suy giảm miễn dịch.</p>
+                <div className="med-card">
+                    <div className="med-name">Ivermectin</div>
+                    <p style={{fontSize:'0.85rem', color:'#334155', margin:0}}>Hiệu quả cao với giun lươn và giun truyền qua da. Ưu tiên khi nghi ngờ giun lươn lan rộng.</p>
                 </div>
-                <div className="card-minimal">
-                    <h4 style={{color:'#0766F7'}}>Praziquantel</h4>
-                    <p style={{fontSize:'0.9rem', color:'#334155'}}>Thuốc đặc hiệu cho đa số bệnh sán dây và sán lá như sán dây bò/lợn, sán lá phổi, sán lá ruột. Có tác dụng diệt ký sinh trùng nhanh và thường dùng liều đơn.</p>
+                <div className="med-card">
+                    <div className="med-name">Praziquantel</div>
+                    <p style={{fontSize:'0.85rem', color:'#334155', margin:0}}>Đặc hiệu cho đa số sán dây và sán lá (sán lợn, sán phổi). Tác dụng nhanh, liều đơn.</p>
                 </div>
-                <div className="card-minimal">
-                    <h4 style={{color:'#0766F7'}}>Triclabendazole</h4>
-                    <p style={{fontSize:'0.9rem', color:'#334155'}}>Lựa chọn hàng đầu cho sán lá gan lớn. Có hiệu quả cao trên cả giai đoạn trưởng thành và ấu trùng, được Bộ Y tế chỉ định rõ trong phác đồ điều trị.</p>
+                <div className="med-card">
+                    <div className="med-name">Triclabendazole</div>
+                    <p style={{fontSize:'0.85rem', color:'#334155', margin:0}}>Lựa chọn hàng đầu cho sán lá gan lớn. Diệt cả sán trưởng thành và ấu trùng.</p>
                 </div>
-                <div className="card-minimal">
-                    <h4 style={{color:'#0766F7'}}>Niclosamide</h4>
-                    <p style={{fontSize:'0.9rem', color:'#334155'}}>Dùng chủ yếu cho sán dây đường ruột. Thuốc tác động tại ruột, ít hấp thu toàn thân và phù hợp khi cần kiểm soát sán dây trưởng thành.</p>
+                <div className="med-card">
+                    <div className="med-name">Niclosamide</div>
+                    <p style={{fontSize:'0.85rem', color:'#334155', margin:0}}>Dùng chủ yếu cho sán dây đường ruột. Ít hấp thu toàn thân.</p>
                 </div>
             </div>
         </div>
 
-        {/* LƯU Ý KHI ĐIỀU TRỊ */}
+        {/* Treatment Notes */}
         <div className="card-comic" style={{marginBottom:'60px'}}>
             <h3 className="text-center" style={{marginBottom:'30px'}}>LƯU Ý KHI ĐIỀU TRỊ</h3>
             <ul style={{listStyle:'disc', paddingLeft:'20px', fontSize:'1rem', lineHeight:'1.8'}}>
@@ -461,31 +497,29 @@ function App() {
               <h3 style={{color: '#0766F7'}}>🥗 CHẾ ĐỘ DINH DƯỠNG</h3>
               <div style={{marginTop:'15px', lineHeight:'1.8'}}>
                  <h4>Nên bổ sung:</h4>
-                 <ul style={{listStyle:'disc', paddingLeft:'20px', fontSize:'0.95rem', marginBottom:'15px'}}>
-                    <li>Thực phẩm giàu đạm: thịt nạc, cá, trứng, sữa.</li>
-                    <li>Rau xanh & trái cây: bổ sung vitamin, khoáng chất.</li>
-                    <li>Chất xơ dễ tiêu: khoai lang, bí đỏ, rau củ hấp.</li>
-                    <li>Nguồn nước sạch: uống đủ 1,5-2 lít/ngày.</li>
+                 <ul style={{listStyle:'none', paddingLeft:'0', fontSize:'0.95rem', marginBottom:'15px'}}>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">👍</span> Thực phẩm giàu đạm: thịt nạc, cá, trứng, sữa.</li>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">👍</span> Rau xanh & trái cây: bổ sung vitamin.</li>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">👍</span> Chất xơ dễ tiêu: khoai lang, bí đỏ.</li>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">👍</span> Nguồn nước sạch: uống đủ 1,5-2 lít/ngày.</li>
                  </ul>
                  <h4>Nên tránh:</h4>
-                 <ul style={{listStyle:'disc', paddingLeft:'20px', fontSize:'0.95rem'}}>
-                    <li>Đồ sống hoặc tái: gỏi cá, thịt tái, tiết canh, rau sống kém vệ sinh.</li>
-                    <li>Đồ chiên rán, cay nóng: dễ gây rối loạn tiêu hóa.</li>
-                    <li>Thực phẩm nhiều đường: bánh kẹo, nước ngọt.</li>
-                    <li>Rượu bia: gây gánh nặng lên gan, ảnh hưởng hấp thu thuốc.</li>
+                 <ul style={{listStyle:'none', paddingLeft:'0', fontSize:'0.95rem'}}>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">🚫</span> Đồ sống hoặc tái: gỏi cá, thịt tái, tiết canh.</li>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">🚫</span> Đồ chiên rán, cay nóng.</li>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">🚫</span> Rượu bia, chất kích thích.</li>
                  </ul>
               </div>
            </div>
            <div className="card-minimal" style={{background:'#f0fdf4', border:'1px solid #bbf7d0'}}>
               <h3 style={{color: '#16a34a'}}>🏡 CHĂM SÓC TẠI NHÀ</h3>
               <div style={{marginTop: '15px', lineHeight:'1.8'}}>
-                 <ul style={{listStyle:'disc', paddingLeft:'20px', fontSize:'0.95rem'}}>
-                    <li>Tuân thủ thuốc đúng hướng dẫn: đúng liều, thời điểm, đủ liệu trình.</li>
-                    <li>Giữ vệ sinh cá nhân: rửa tay trước ăn/sau vệ sinh, cắt móng tay ngắn.</li>
-                    <li>Ăn chín uống sôi: tránh tuyệt đối thực phẩm sống/tái.</li>
-                    <li>Giữ môi trường sạch: vệ sinh bếp, nhà vệ sinh, xử lý phân – rác.</li>
-                    <li>Nghỉ ngơi hợp lý: ngủ đủ giấc, giảm căng thẳng.</li>
-                    <li>Theo dõi triệu chứng: liên hệ bác sĩ nếu sốt, đau bụng, tiêu chảy kéo dài.</li>
+                 <ul style={{listStyle:'none', paddingLeft:'0', fontSize:'0.95rem'}}>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">✅</span> Tuân thủ thuốc đúng liều lượng.</li>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">✅</span> Rửa tay thường xuyên.</li>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">✅</span> Ăn chín uống sôi tuyệt đối.</li>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">✅</span> Vệ sinh nhà cửa, xử lý rác.</li>
+                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">✅</span> Ngủ đủ giấc, giảm căng thẳng.</li>
                  </ul>
               </div>
            </div>
@@ -498,31 +532,42 @@ function App() {
             <h2 className="section-title">PHÒNG NGỪA<br/>TÁI NHIỄM</h2>
         </div>
         
-        {/* CÁC PHÒNG NGỪA TÁI NHIỄM */}
+        {/* Prevention */}
         <div className="card-comic" style={{marginBottom:'60px'}}>
             <h3 className="text-center" style={{marginBottom:'30px'}}>CÁC PHÒNG NGỪA TÁI NHIỄM</h3>
-            <ul style={{listStyle:'disc', paddingLeft:'20px', fontSize:'1rem', lineHeight:'1.8'}}>
-                <li>Ăn chín uống sôi: Tránh tuyệt đối các món sống, tái; đảm bảo nước uống và thực phẩm được xử lý vệ sinh.</li>
-                <li>Rửa tay đúng cách: Rửa tay với xà phòng trước khi ăn, sau khi đi vệ sinh và sau khi tiếp xúc đất, thú cưng.</li>
-                <li>Giữ vệ sinh môi trường: Làm sạch bếp, nhà vệ sinh, dụng cụ ăn uống; xử lý phân – rác đúng quy trình.</li>
-                <li>Vệ sinh thú cưng: Tẩy giun định kỳ cho chó mèo 3 tháng/lần, tránh để vật nuôi tiếp xúc gần khi đang điều trị.</li>
-                <li>Quản lý thực phẩm an toàn: Rửa sạch rau củ, ngâm nước muối, bảo quản lạnh đúng cách; tránh mua thực phẩm không rõ nguồn gốc.</li>
-                <li>Tránh đi chân đất: Đặc biệt ở khu vực ẩm, đất ướt hoặc nơi có nguy cơ nhiễm giun móc và giun lươn.</li>
-                <li>Tẩy giun định kỳ theo khuyến cáo: Thực hiện tẩy giun cho cá nhân và gia đình, nhất là trẻ nhỏ, theo khuyến cáo của Bộ Y tế.</li>
-                <li>Tránh dùng chung đồ cá nhân: Không dùng chung khăn, cốc, chén, thau rửa hay vật dụng tắm rửa để hạn chế lây chéo trong gia đình.</li>
-            </ul>
+            <div className="checklist-grid">
+                <div className="check-item"><span className="check-icon">✅</span> <span><strong>Ăn chín uống sôi:</strong> Tránh tuyệt đối các món sống, tái.</span></div>
+                <div className="check-item"><span className="check-icon">✅</span> <span><strong>Rửa tay đúng cách:</strong> Với xà phòng trước ăn/sau vệ sinh.</span></div>
+                <div className="check-item"><span className="check-icon">✅</span> <span><strong>Vệ sinh môi trường:</strong> Sạch bếp, nhà vệ sinh, xử lý rác.</span></div>
+                <div className="check-item"><span className="check-icon">✅</span> <span><strong>Vệ sinh thú cưng:</strong> Tẩy giun 3 tháng/lần cho chó mèo.</span></div>
+                <div className="check-item"><span className="check-icon">✅</span> <span><strong>Thực phẩm an toàn:</strong> Rửa sạch rau, bảo quản đúng cách.</span></div>
+                <div className="check-item"><span className="check-icon">✅</span> <span><strong>Tránh đi chân đất:</strong> Đặc biệt nơi đất ẩm, nguy cơ giun móc.</span></div>
+                <div className="check-item"><span className="check-icon">✅</span> <span><strong>Tẩy giun định kỳ:</strong> Cho cả gia đình theo khuyến cáo.</span></div>
+                <div className="check-item"><span className="check-icon">✅</span> <span><strong>Tránh dùng chung:</strong> Khăn, cốc, đồ cá nhân.</span></div>
+            </div>
         </div>
 
-        {/* TẨY GIUN ĐỊNH KỲ */}
-        <div className="card-comic" style={{marginBottom:'60px'}}>
-            <h3 className="text-center" style={{marginBottom:'30px'}}>TẨY GIUN ĐỊNH KỲ</h3>
-            <ul style={{listStyle:'disc', paddingLeft:'20px', fontSize:'1rem', lineHeight:'1.8'}}>
-                <li><strong>Trẻ em &lt;12 tháng tuổi:</strong> Không tẩy giun.</li>
-                <li><strong>Trẻ em từ 12 tháng tuổi:</strong> 6 tháng/lần.</li>
-                <li><strong>Người lớn:</strong> 6-12 tháng/lần (Tùy mức độ nguy cơ).</li>
-                <li><strong>Phụ nữ mang thai:</strong> Theo chỉ định bác sĩ, không tẩy giun trong 3 tháng đầu thai kỳ.</li>
-                <li><strong>Người suy giảm miễn dịch/bệnh mãn tính:</strong> Theo chỉ định bác sĩ.</li>
-            </ul>
+        {/* Deworming Schedule */}
+        <div className="card-minimal" style={{marginBottom:'60px', background:'#f0f9ff', border:'2px dashed #0ea5e9'}}>
+            <h3 className="text-center" style={{marginBottom:'20px', color:'#0369a1'}}>📅 LỊCH TẨY GIUN ĐỊNH KỲ</h3>
+            <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:'20px', textAlign:'center'}}>
+                <div>
+                    <strong>Trẻ em &lt;12 tháng</strong>
+                    <div style={{marginTop:'5px', color:'#64748b'}}>Không tẩy giun</div>
+                </div>
+                <div>
+                    <strong>Trẻ em &gt;12 tháng</strong>
+                    <div style={{marginTop:'5px', color:'#0766F7', fontWeight:'bold'}}>6 tháng/lần</div>
+                </div>
+                <div>
+                    <strong>Người lớn</strong>
+                    <div style={{marginTop:'5px', color:'#0766F7', fontWeight:'bold'}}>6-12 tháng/lần</div>
+                </div>
+                <div>
+                    <strong>Phụ nữ mang thai</strong>
+                    <div style={{marginTop:'5px', color:'#64748b'}}>Theo chỉ định bác sĩ</div>
+                </div>
+            </div>
         </div>
 
 
