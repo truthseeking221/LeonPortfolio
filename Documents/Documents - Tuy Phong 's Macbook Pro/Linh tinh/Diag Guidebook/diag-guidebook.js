@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-// Version: 9.0.1 (Fix Layout & Content)
+// Version: 9.1.2 (Added Interspersed CTAs)
 
 const faqList = [
   { q: "Xét nghiệm ký sinh trùng ở đâu?", a: "Liên hệ Diag để được tư vấn các chi nhánh gần nhất và đặt lịch xét nghiệm." },
@@ -84,7 +84,7 @@ function App() {
         </div>
 
         {/* Risk Groups */}
-        <div className="card-comic" style={{marginBottom:'60px'}}>
+        <div className="card-comic" style={{marginBottom:'40px'}}>
             <h3 className="text-center" style={{marginBottom:'30px'}}>ĐỐI TƯỢNG NGUY CƠ</h3>
             <div className="risk-grid" style={{marginBottom:0}}>
                 <div className="risk-item" style={{textAlign:'left'}}>
@@ -122,6 +122,18 @@ function App() {
                     <h4 style={{margin:'0 0 5px 0'}}>Suy giảm miễn dịch</h4>
                     <p style={{fontSize:'0.9rem', color:'#64748b', margin:0}}>HIV/AIDS, dùng corticoid kéo dài, sau ghép tạng, hóa trị, người cao tuổi.</p>
                 </div>
+            </div>
+        </div>
+
+        {/* --- CTA 1: Post Risk --- */}
+        <div className="text-center relative" style={{zIndex:2, marginBottom:'60px'}}>
+            <div style={{display:'inline-block', background:'#fff', padding:'20px 40px', borderRadius:'20px', border:'2px solid #0766F7', boxShadow:'4px 4px 0 #0766F7'}}>
+                <p style={{fontSize:'1.1rem', fontWeight:'bold', color:'#0f172a', marginBottom:'15px', margin:0}}>
+                    Bạn hoặc người thân thuộc nhóm nguy cơ trên?
+                </p>
+                <button className="btn-cta small" style={{marginTop:'15px'}}>
+                    ĐẶT LỊCH TẦM SOÁT NGAY
+                </button>
             </div>
         </div>
 
@@ -170,7 +182,7 @@ function App() {
                 <p>Điều trị hiệu quả hoàn toàn nếu phát hiện sớm và dùng đúng phác đồ.</p>
                 <div style={{background: '#fff', padding: '15px', borderRadius: '10px', marginTop: '15px', border:'1px dashed #16a34a'}}>
                     <strong style={{color: '#c2410c'}}>⚠️ CẢNH BÁO:</strong>
-                    <p style={{margin:0, fontSize: '0.9rem'}}>Tự ý dùng thuốc có thể gây kháng thuốc hoặc hại gan/thận mà không hết bệnh.</p>
+                    <p style={{margin:0, fontSize: '0.9rem'}}>Tự ý dùng thuốc có thể gây kháng thuốc hoặc hại gan/thận.</p>
                 </div>
              </div>
         </div>
@@ -317,7 +329,7 @@ function App() {
         </div>
 
         {/* VS Comparison */}
-        <div style={{marginBottom: '60px'}}>
+        <div style={{marginBottom: '40px'}}>
            <div className="card-comic">
                 <h3 className="text-center" style={{marginBottom:'20px'}}>CÁCH PHÂN BIỆT VỚI DỊ ỨNG / RỐI LOẠN TIÊU HÓA</h3>
                 <div style={{display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '20px', alignItems: 'center'}}>
@@ -341,6 +353,13 @@ function App() {
                     </div>
                 </div>
            </div>
+        </div>
+
+        {/* --- CTA 2: Post Symptoms/VS --- */}
+        <div className="text-center relative" style={{zIndex:2, marginBottom:'60px'}}>
+             <button className="btn-cta" style={{background:'#ea580c', borderColor:'#9a3412'}}>
+                NGHI NGỜ NHIỄM? ĐẶT LỊCH XÉT NGHIỆM NGAY
+             </button>
         </div>
 
         {/* Diagnosis */}
@@ -411,7 +430,7 @@ function App() {
             <h2 className="section-title">KIẾN THỨC<br/>VỀ ĐIỀU TRỊ</h2>
         </div>
 
-        {/* Treatment Methods */}
+        {/* Cách Điều Trị */}
         <div className="card-comic" style={{marginBottom:'60px'}}>
             <h3 className="text-center" style={{marginBottom:'30px'}}>CÁCH ĐIỀU TRỊ</h3>
             <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:'30px'}}>
@@ -466,7 +485,7 @@ function App() {
         </div>
 
         {/* Treatment Notes */}
-        <div className="card-comic" style={{marginBottom:'60px'}}>
+        <div className="card-comic" style={{marginBottom:'40px'}}>
             <h3 className="text-center" style={{marginBottom:'30px'}}>LƯU Ý KHI ĐIỀU TRỊ</h3>
             <ul style={{listStyle:'disc', paddingLeft:'20px', fontSize:'1rem', lineHeight:'1.8'}}>
                 <li>Tuân thủ đúng phác đồ điều trị của bác sĩ.</li>
@@ -483,6 +502,13 @@ function App() {
                 </li>
                 <li>Tái khám đúng hẹn để đánh giá hiệu quả và phòng ngừa tái nhiễm.</li>
             </ul>
+        </div>
+
+        {/* --- CTA 3: Pre-Prevention/Post Treatment --- */}
+        <div style={{background:'#e0f2fe', padding:'30px', borderRadius:'20px', textAlign:'center', marginBottom:'60px', border:'2px solid #bae6fd'}}>
+            <h3 style={{color:'#0369a1', fontSize:'1.5rem', marginBottom:'10px'}}>Chưa rõ mình có nhiễm bệnh hay không?</h3>
+            <p style={{marginBottom:'20px'}}>Đừng đoán mò. Kết quả xét nghiệm là cơ sở duy nhất để điều trị dứt điểm.</p>
+            <button className="btn-cta" style={{background:'#0369a1', borderColor:'#075985'}}>ĐẶT LỊCH NGAY</button>
         </div>
 
 
