@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 
-// Version: 9.1.2 (Added Interspersed CTAs)
+// Version: 9.3.0 (Added Smart Navigation)
 
 const faqList = [
   { q: "Xét nghiệm ký sinh trùng ở đâu?", a: "Liên hệ Diag để được tư vấn các chi nhánh gần nhất và đặt lịch xét nghiệm." },
@@ -14,6 +14,88 @@ const faqList = [
   { q: "Uống thuốc tẩy giun quá liều có sao không?", a: "Uống quá liều có thể gây ngộ độc gan, thận, rối loạn thần kinh. Cần tuân thủ đúng liều lượng bác sĩ chỉ định." }
 ];
 
+const SECTIONS = [
+  { id: 'hero', title: 'Đầu trang', icon: '🏠' },
+  { id: 'phan-1', title: 'Tổng Quan', icon: '📊' },
+  { id: 'phan-2', title: 'Hiểu Đúng', icon: '💡' },
+  { id: 'phan-3', title: 'Nhận Diện', icon: '👀' },
+  { id: 'phan-4', title: 'Điều Trị', icon: '💊' },
+  { id: 'phan-5', title: 'Phòng Ngừa', icon: '🛡️' },
+  { id: 'phan-6', title: 'Hỏi Đáp', icon: '❓' },
+];
+
+function Navigation() {
+  const [activeSection, setActiveSection] = useState('hero');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.3, rootMargin: "-20% 0px -50% 0px" } // Trigger when section is near center/top
+    );
+
+    SECTIONS.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleScrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        setMobileMenuOpen(false);
+    }
+  };
+
+  return (
+    <>
+      {/* Desktop Rail */}
+      <div className="nav-rail">
+        {SECTIONS.map((section) => (
+          <div
+            key={section.id}
+            className={`nav-node ${activeSection === section.id ? 'active' : ''}`}
+            onClick={() => handleScrollTo(section.id)}
+          >
+            <div className="nav-tooltip">{section.title}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Mobile Wrapper */}
+      <div className="nav-mobile-wrapper">
+        <div className={`nav-overlay ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(false)}></div>
+        
+        <div className={`nav-mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+           {SECTIONS.map((section) => (
+             <div 
+                key={section.id} 
+                className={`nav-mobile-item ${activeSection === section.id ? 'active' : ''}`}
+                onClick={() => handleScrollTo(section.id)}
+             >
+                <span>{section.title}</span>
+                <span>{section.icon}</span>
+             </div>
+           ))}
+        </div>
+
+        <div className="nav-fab" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+           {mobileMenuOpen ? '✕' : '☰'}
+        </div>
+      </div>
+    </>
+  );
+}
+
 function App() {
   const [activeFaq, setActiveFaq] = useState(null);
 
@@ -24,9 +106,10 @@ function App() {
 
   return (
     <div className="app-container">
+      <Navigation />
       
       {/* --- HERO SECTION --- */}
-      <section className="hero-section">
+      <section id="hero" className="hero-section">
         <div className="container">
           <div className="hero-box">
             <div style={{background: '#0766F7', color:'#fff', display:'inline-block', padding:'6px 16px', borderRadius:'30px', fontWeight:'bold', marginBottom:'15px', fontSize: '0.9rem', letterSpacing:'1px'}}>DOCTOR DIAG</div>
@@ -36,15 +119,25 @@ function App() {
             </p>
             
             {/* Audience */}
-            <div style={{marginTop:'30px', textAlign:'left'}}>
-               <div className="card-minimal" style={{borderLeft:'4px solid #0ea5e9'}}>
-                   <h4 style={{marginBottom: '15px', color:'#0284c7'}}>Cẩm nang này dành riêng cho ai?</h4>
-                   <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
-                      <span style={{background: '#e0f2fe', color: '#0369a1', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight:'bold'}}>Phụ huynh có con nhỏ</span>
-                      <span style={{background: '#e0f2fe', color: '#0369a1', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight:'bold'}}>Người nghi nhiễm bệnh</span>
-                      <span style={{background: '#e0f2fe', color: '#0369a1', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight:'bold'}}>Người có nguy cơ cao</span>
-                      <span style={{background: '#e0f2fe', color: '#0369a1', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight:'bold'}}>Người chăm sóc</span>
-                   </div>
+            <div style={{marginTop:'40px', textAlign:'center'}}>
+               <h4 style={{marginBottom: '20px', color:'#0284c7', fontSize:'1.1rem'}}>CẨM NANG NÀY DÀNH RIÊNG CHO AI?</h4>
+               <div className="audience-grid">
+                  <div className="audience-badge">
+                      <span className="audience-icon">👨‍👩‍👧</span>
+                      <span className="audience-label">Phụ huynh<br/>có con nhỏ</span>
+                  </div>
+                  <div className="audience-badge">
+                      <span className="audience-icon">🤒</span>
+                      <span className="audience-label">Người nghi<br/>nhiễm bệnh</span>
+                  </div>
+                  <div className="audience-badge">
+                      <span className="audience-icon">⚠️</span>
+                      <span className="audience-label">Người có<br/>nguy cơ cao</span>
+                  </div>
+                   <div className="audience-badge">
+                      <span className="audience-icon">🏥</span>
+                      <span className="audience-label">Người<br/>chăm sóc</span>
+                  </div>
                </div>
             </div>
             
@@ -74,8 +167,8 @@ function App() {
           <div className="card-comic" style={{flex:1.5}}>
             <h3 style={{marginBottom:'20px', color: '#0766F7'}}>CON SỐ THỐNG KÊ</h3>
             <ul style={{fontSize: '1rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
-               <li>~20 nghìn người nhiễm giun chó mèo/năm VN.</li>
-               <li>42% trẻ em 2-5 tuổi nhiễm giun sán.</li>
+               <li><strong style={{color: 'var(--primary-brand)', fontSize: '1.1rem'}}>~20 nghìn</strong> người nhiễm giun chó mèo/năm VN.</li>
+               <li><strong style={{color: 'var(--primary-brand)', fontSize: '1.1rem'}}>42%</strong> trẻ em 2-5 tuổi nhiễm giun sán.</li>
                <li style={{gridColumn: '1 / span 2', borderTop:'1px dashed #cbd5e1', paddingTop:'10px'}}>
                    <div className="fact-box"><strong>Fact:</strong> Khoảng 70 - 80% chúng ta nhiễm ít nhất một loại giun nào đó.</div>
                </li>
@@ -139,52 +232,59 @@ function App() {
 
         {/* Classification */}
         <div style={{marginBottom:'60px'}}>
-           <div className="text-center" style={{marginBottom:'30px'}}>
-               <h3>PHÂN LOẠI KÝ SINH TRÙNG</h3>
-               <p style={{fontSize:'1rem', color:'#64748b', maxWidth:'600px', margin:'0 auto'}}>Để có kiến thức toàn diện về ký sinh trùng, bạn cần nắm được 4 nhóm ký sinh trùng sau, mỗi nhóm có đặc điểm riêng:</p>
-           </div>
-           <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px'}}>
-               <div className="grid-item-clean">
-                  <div style={{fontSize:'2rem'}}>🪱</div>
-                  <strong style={{display:'block', marginTop:'5px', color:'#0766F7'}}>Giun, sán</strong>
-               </div>
-               <div className="grid-item-clean">
-                  <div style={{fontSize:'2rem'}}>🦠</div>
-                  <strong style={{display:'block', marginTop:'5px', color:'#0766F7'}}>Động vật đơn bào</strong>
-               </div>
-               <div className="grid-item-clean">
-                  <div style={{fontSize:'2rem'}}>🕷️</div>
-                  <strong style={{display:'block', marginTop:'5px', color:'#0766F7'}}>Ký sinh trùng ngoài da</strong>
-               </div>
-               <div className="grid-item-clean">
-                  <div style={{fontSize:'2rem'}}>...</div>
-                  <strong style={{display:'block', marginTop:'5px', color:'#0766F7'}}>Và nhiều loại khác</strong>
+           <div className="card-comic">
+               <h3 className="text-center" style={{marginBottom:'30px'}}>PHÂN LOẠI KÝ SINH TRÙNG</h3>
+               <p className="text-center" style={{fontSize:'1rem', color:'#64748b', maxWidth:'600px', margin:'0 auto 30px'}}>Để có kiến thức toàn diện về ký sinh trùng, bạn cần nắm được 4 nhóm ký sinh trùng sau, mỗi nhóm có đặc điểm riêng:</p>
+               
+               <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', textAlign:'center'}}>
+                   <div style={{padding:'15px', background:'#f8fafc', borderRadius:'15px'}}>
+                      <div style={{fontSize:'2.5rem', marginBottom:'10px'}}>🪱</div>
+                      <strong style={{display:'block', color:'#0766F7'}}>Giun, sán</strong>
+                   </div>
+                   <div style={{padding:'15px', background:'#f8fafc', borderRadius:'15px'}}>
+                      <div style={{fontSize:'2.5rem', marginBottom:'10px'}}>🦠</div>
+                      <strong style={{display:'block', color:'#0766F7'}}>Đơn bào</strong>
+                   </div>
+                   <div style={{padding:'15px', background:'#f8fafc', borderRadius:'15px'}}>
+                      <div style={{fontSize:'2.5rem', marginBottom:'10px'}}>🕷️</div>
+                      <strong style={{display:'block', color:'#0766F7'}}>Ngoài da</strong>
+                   </div>
+                   <div style={{padding:'15px', background:'#f8fafc', borderRadius:'15px'}}>
+                      <div style={{fontSize:'2.5rem', marginBottom:'10px'}}>...</div>
+                      <strong style={{display:'block', color:'#0766F7'}}>Khác</strong>
+                   </div>
                </div>
            </div>
         </div>
 
-        {/* Danger & Curability */}
-        <div className="balance-grid">
-             <div className="balance-card danger">
-                <div className="balance-icon" style={{fontSize:'3rem'}}>🚨</div>
-                <h3 style={{color: '#dc2626'}}>MỨC ĐỘ NGUY HIỂM</h3>
-                <ul style={{paddingLeft: '20px', fontSize:'0.95rem', lineHeight:'1.6', listStyle:'disc'}}>
-                   <li>Suy dinh dưỡng, thiếu máu trầm trọng.</li>
-                   <li>Tổn thương nội tạng: Gan, Phổi, Não.</li>
-                   <li>Tắc ruột, viêm loét tiêu hóa.</li>
-                   <li>Sảy thai, dị tật thai nhi.</li>
-                </ul>
-             </div>
-             
-             <div className="balance-card cure">
-                <div className="balance-icon" style={{fontSize:'3rem'}}>✅</div>
-                <h3 style={{color: '#16a34a'}}>KHẢ NĂNG CHỮA TRỊ</h3>
-                <p>Điều trị hiệu quả hoàn toàn nếu phát hiện sớm và dùng đúng phác đồ.</p>
-                <div style={{background: '#fff', padding: '15px', borderRadius: '10px', marginTop: '15px', border:'1px dashed #16a34a'}}>
-                    <strong style={{color: '#c2410c'}}>⚠️ CẢNH BÁO:</strong>
-                    <p style={{margin:0, fontSize: '0.9rem'}}>Tự ý dùng thuốc có thể gây kháng thuốc hoặc hại gan/thận.</p>
+        {/* Danger & Curability - Redesigned as Reality Card */}
+        <div className="reality-card">
+            <div className="reality-header">SỰ THẬT VỀ BỆNH</div>
+            <div className="reality-content">
+                <div className="reality-side danger">
+                    <span className="reality-icon">🚨</span>
+                    <h4 className="reality-title">NẾU CHỦ QUAN...</h4>
+                    <ul style={{paddingLeft: '20px', fontSize:'0.95rem', lineHeight:'1.6', listStyle:'disc'}}>
+                        <li>Suy dinh dưỡng, thiếu máu trầm trọng.</li>
+                        <li>Tổn thương nội tạng: Gan, Phổi, Não.</li>
+                        <li>Tắc ruột, viêm loét tiêu hóa.</li>
+                        <li>Sảy thai, dị tật thai nhi.</li>
+                    </ul>
                 </div>
-             </div>
+
+                <div className="reality-arrow">➤</div>
+
+                <div className="reality-side cure">
+                    <span className="reality-icon">✅</span>
+                    <h4 className="reality-title">KHI ĐIỀU TRỊ ĐÚNG...</h4>
+                    <p>Bệnh có thể điều trị <strong>hiệu quả hoàn toàn</strong> nếu phát hiện sớm và tuân thủ phác đồ y khoa.</p>
+                    
+                    <div style={{background: 'rgba(255,255,255,0.6)', padding: '15px', borderRadius: '10px', marginTop: '20px', border:'1px dashed #16a34a'}}>
+                        <strong style={{color: '#c2410c', display:'block', marginBottom:'5px'}}>⚠️ LƯU Ý QUAN TRỌNG:</strong>
+                        <p style={{margin:0, fontSize: '0.9rem'}}>Tuyệt đối không tự ý mua thuốc. Việc dùng sai thuốc có thể gây kháng thuốc, hại gan/thận mà không diệt được gốc bệnh.</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
@@ -249,7 +349,7 @@ function App() {
         
 
         {/* Myths */}
-        <div style={{position: 'relative', zIndex: 2, marginBottom:'60px'}}>
+        <div className="card-comic" style={{marginBottom:'60px'}}>
            <h3 className="text-center" style={{marginBottom: '30px', fontSize: '1.8rem'}}>NHỮNG HIỂU LẦM VỀ BỆNH</h3>
            <div className="myth-grid">
               <div className="myth-card">
@@ -328,27 +428,28 @@ function App() {
             </div>
         </div>
 
-        {/* VS Comparison */}
-        <div style={{marginBottom: '40px'}}>
+        {/* VS Comparison - Redesigned */}
+        <div style={{marginBottom: '60px'}}>
            <div className="card-comic">
-                <h3 className="text-center" style={{marginBottom:'20px'}}>CÁCH PHÂN BIỆT VỚI DỊ ỨNG / RỐI LOẠN TIÊU HÓA</h3>
-                <div style={{display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '20px', alignItems: 'center'}}>
-                    <div className="card-minimal" style={{margin:0, padding:'20px', borderLeft:'4px solid #0766F7'}}>
-                        <h4 style={{color: '#0766F7', fontSize:'1.1rem'}}>Rối loạn tiêu hóa / Dị ứng thông thường</h4>
-                        <ul style={{listStyle:'disc', paddingLeft:'20px', fontSize:'0.9rem', color:'#64748b', lineHeight:'1.6'}}>
-                            <li>Thường có yếu tố khởi phát rõ ràng (ăn lạ, tiếp xúc dị nguyên).</li>
-                            <li>Triệu chứng thường xuất hiện nhanh và tự giới hạn.</li>
-                            <li>Hiếm khi kèm theo sụt cân, thiếu máu, mệt mỏi kéo dài.</li>
+                <h3 className="text-center" style={{marginBottom:'30px'}}>CÁCH PHÂN BIỆT VỚI DỊ ỨNG / RỐI LOẠN TIÊU HÓA</h3>
+                <div className="vs-layout">
+                    <div className="vs-card normal">
+                        <h4 style={{color: '#64748b', fontSize:'1.2rem', marginBottom:'15px', fontWeight:'800'}}>Rối loạn tiêu hóa / Dị ứng</h4>
+                        <ul style={{listStyle:'none', padding:0}}>
+                            <li style={{marginBottom:'10px', display:'flex', gap:'10px'}}><span style={{color:'#64748b'}}>➤</span> Có yếu tố khởi phát rõ (ăn lạ, dị nguyên).</li>
+                            <li style={{marginBottom:'10px', display:'flex', gap:'10px'}}><span style={{color:'#64748b'}}>➤</span> Triệu chứng nhanh, tự giới hạn.</li>
+                            <li style={{display:'flex', gap:'10px'}}><span style={{color:'#64748b'}}>➤</span> Hiếm khi sụt cân, thiếu máu.</li>
                         </ul>
                     </div>
-                    <div style={{fontSize: '2rem', fontWeight: '900', color: '#1e293b', alignSelf:'center'}}>VS</div>
-                    <div className="card-minimal" style={{margin:0, padding:'20px', borderLeft:'4px solid #ef4444'}}>
-                        <h4 style={{color: '#ef4444', fontSize:'1.1rem'}}>Nhiễm ký sinh trùng</h4>
-                        <ul style={{listStyle:'disc', paddingLeft:'20px', fontSize:'0.9rem', color:'#64748b', lineHeight:'1.6'}}>
-                            <li>Triệu chứng kéo dài, mạn tính, thường tái diễn.</li>
-                            <li>Không rõ nguyên nhân, khó điều trị dứt điểm bằng thuốc thông thường.</li>
-                            <li>Kèm theo các dấu hiệu toàn thân như sụt cân, thiếu máu, mệt mỏi, ngứa da.</li>
-                            <li>Có yếu tố nguy cơ (ăn đồ tái sống, tiếp xúc thú cưng, môi trường kém vệ sinh).</li>
+                    
+                    <div className="vs-badge">VS</div>
+
+                    <div className="vs-card parasite">
+                        <h4 style={{color: '#ef4444', fontSize:'1.2rem', marginBottom:'15px', fontWeight:'800'}}>Nhiễm Ký sinh trùng</h4>
+                        <ul style={{listStyle:'none', padding:0}}>
+                            <li style={{marginBottom:'10px', display:'flex', gap:'10px'}}><span style={{color:'#ef4444'}}>➤</span> Kéo dài, mạn tính, tái diễn.</li>
+                            <li style={{marginBottom:'10px', display:'flex', gap:'10px'}}><span style={{color:'#ef4444'}}>➤</span> Khó điều trị bằng thuốc thường.</li>
+                            <li style={{display:'flex', gap:'10px'}}><span style={{color:'#ef4444'}}>➤</span> Kèm sụt cân, thiếu máu, ngứa da.</li>
                         </ul>
                     </div>
                 </div>
@@ -401,20 +502,35 @@ function App() {
               </div>
            </div>
 
-           <div className="card-comic" style={{marginTop: '30px', padding: '20px'}}>
-                <h4 className="text-center" style={{fontSize:'1.2rem', marginBottom:'15px'}}>CÁCH ĐỌC KẾT QUẢ XÉT NGHIỆM</h4>
-                <div className="result-grid">
-                    <div className="result-card result-pos">
-                        <span style={{color: '#dc2626', fontWeight: 'bold', fontSize:'1.2rem', display:'block', marginBottom:'5px'}}>Dương tính</span>
-                        <span style={{fontSize:'0.9rem'}}>Xác nhận có KST. Cần điều trị ngay.</span>
+           <div className="card-comic" style={{marginTop: '30px', padding: '30px'}}>
+                <h4 className="text-center" style={{fontSize:'1.5rem', marginBottom:'25px', color: '#0f172a'}}>🚦 CÁCH ĐỌC KẾT QUẢ</h4>
+                
+                <div className="result-traffic-container">
+                    {/* Positive - Red */}
+                    <div className="traffic-light-row">
+                        <div className="light-bulb red">POS</div>
+                        <div className="light-info">
+                            <div className="light-title">DƯƠNG TÍNH (+)</div>
+                            <p className="light-desc">Đã tìm thấy dấu hiệu ký sinh trùng. <strong>Hành động:</strong> Cần gặp bác sĩ để lên phác đồ điều trị ngay.</p>
+                        </div>
                     </div>
-                    <div className="result-card result-neg">
-                        <span style={{color: '#16a34a', fontWeight: 'bold', fontSize:'1.2rem', display:'block', marginBottom:'5px'}}>Âm tính</span>
-                        <span style={{fontSize:'0.9rem'}}>Chưa phát hiện. Có thể cần lặp lại.</span>
+
+                    {/* Warning - Yellow */}
+                    <div className="traffic-light-row">
+                         <div className="light-bulb yellow">SUS</div>
+                         <div className="light-info">
+                             <div className="light-title">NGHI NGỜ (+/-)</div>
+                             <p className="light-desc">Tín hiệu chưa rõ ràng hoặc ở ranh giới. <strong>Hành động:</strong> Cần xét nghiệm lại hoặc làm thêm phương pháp khác.</p>
+                         </div>
                     </div>
-                    <div className="result-card result-sus">
-                        <span style={{color: '#ca8a04', fontWeight: 'bold', fontSize:'1.2rem', display:'block', marginBottom:'5px'}}>Nghi ngờ</span>
-                        <span style={{fontSize:'0.9rem'}}>Tín hiệu mờ. Cần xét nghiệm bổ sung.</span>
+
+                    {/* Negative - Green */}
+                    <div className="traffic-light-row">
+                        <div className="light-bulb green">NEG</div>
+                        <div className="light-info">
+                            <div className="light-title">ÂM TÍNH (-)</div>
+                            <p className="light-desc">Hiện tại chưa tìm thấy ký sinh trùng. <strong>Hành động:</strong> Tiếp tục phòng ngừa và tái kiểm tra định kỳ.</p>
+                        </div>
                     </div>
                 </div>
            </div>
@@ -518,35 +634,74 @@ function App() {
             <h2 className="section-title">DINH DƯỠNG<br/>& CHĂM SÓC TẠI NHÀ</h2>
         </div>
         
-        <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'30px', marginBottom:'60px'}}>
-           <div className="card-minimal" style={{background:'#eff6ff', border:'1px solid #bfdbfe'}}>
-              <h3 style={{color: '#0766F7'}}>🥗 CHẾ ĐỘ DINH DƯỠNG</h3>
-              <div style={{marginTop:'15px', lineHeight:'1.8'}}>
-                 <h4>Nên bổ sung:</h4>
-                 <ul style={{listStyle:'none', paddingLeft:'0', fontSize:'0.95rem', marginBottom:'15px'}}>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">👍</span> Thực phẩm giàu đạm: thịt nạc, cá, trứng, sữa.</li>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">👍</span> Rau xanh & trái cây: bổ sung vitamin.</li>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">👍</span> Chất xơ dễ tiêu: khoai lang, bí đỏ.</li>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">👍</span> Nguồn nước sạch: uống đủ 1,5-2 lít/ngày.</li>
-                 </ul>
-                 <h4>Nên tránh:</h4>
-                 <ul style={{listStyle:'none', paddingLeft:'0', fontSize:'0.95rem'}}>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">🚫</span> Đồ sống hoặc tái: gỏi cá, thịt tái, tiết canh.</li>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">🚫</span> Đồ chiên rán, cay nóng.</li>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">🚫</span> Rượu bia, chất kích thích.</li>
-                 </ul>
+        {/* Nutrition & Care - Redesigned Layout */}
+        <div className="care-layout" style={{marginBottom:'60px'}}>
+           {/* Nutrition Card */}
+           <div className="care-card">
+              <div className="care-header" style={{background:'#0766F7'}}>🥗 CHẾ ĐỘ DINH DƯỠNG</div>
+              <div className="care-body">
+                 <div style={{marginBottom:'20px'}}>
+                     <strong style={{color:'#0766F7', display:'block', marginBottom:'10px'}}>Nên bổ sung:</strong>
+                     <div className="care-item">
+                        <div className="care-icon" style={{color:'#0766F7'}}>🥩</div>
+                        <span><strong>Đạm:</strong> Thịt nạc, cá, trứng, sữa.</span>
+                     </div>
+                     <div className="care-item">
+                        <div className="care-icon" style={{color:'#0766F7'}}>🥦</div>
+                        <span><strong>Vitamin:</strong> Rau xanh & trái cây.</span>
+                     </div>
+                     <div className="care-item">
+                        <div className="care-icon" style={{color:'#0766F7'}}>🍠</div>
+                        <span><strong>Chất xơ:</strong> Khoai lang, bí đỏ.</span>
+                     </div>
+                     <div className="care-item">
+                        <div className="care-icon" style={{color:'#0766F7'}}>💧</div>
+                        <span><strong>Nước sạch:</strong> 1.5 - 2 lít/ngày.</span>
+                     </div>
+                 </div>
+                 
+                 <div>
+                     <strong style={{color:'#ef4444', display:'block', marginBottom:'10px'}}>Nên tránh:</strong>
+                     <div className="care-item">
+                        <div className="care-icon" style={{color:'#ef4444'}}>❌</div>
+                        <span><strong>Đồ sống/tái:</strong> Gỏi, tiết canh.</span>
+                     </div>
+                     <div className="care-item">
+                        <div className="care-icon" style={{color:'#ef4444'}}>❌</div>
+                        <span><strong>Kích thích:</strong> Rượu bia, đồ cay nóng.</span>
+                     </div>
+                 </div>
               </div>
            </div>
-           <div className="card-minimal" style={{background:'#f0fdf4', border:'1px solid #bbf7d0'}}>
-              <h3 style={{color: '#16a34a'}}>🏡 CHĂM SÓC TẠI NHÀ</h3>
-              <div style={{marginTop: '15px', lineHeight:'1.8'}}>
-                 <ul style={{listStyle:'none', paddingLeft:'0', fontSize:'0.95rem'}}>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">✅</span> Tuân thủ thuốc đúng liều lượng.</li>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">✅</span> Rửa tay thường xuyên.</li>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">✅</span> Ăn chín uống sôi tuyệt đối.</li>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">✅</span> Vệ sinh nhà cửa, xử lý rác.</li>
-                    <li className="check-item" style={{background:'rgba(255,255,255,0.5)', marginBottom:'5px'}}><span className="check-icon">✅</span> Ngủ đủ giấc, giảm căng thẳng.</li>
-                 </ul>
+
+           {/* Home Care Card */}
+           <div className="care-card">
+              <div className="care-header" style={{background:'#16a34a'}}>🏡 CHĂM SÓC TẠI NHÀ</div>
+              <div className="care-body">
+                 <div className="care-item">
+                    <div className="care-icon" style={{color:'#16a34a'}}>💊</div>
+                    <span><strong>Tuân thủ thuốc:</strong> Đúng liều, đủ liệu trình.</span>
+                 </div>
+                 <div className="care-item">
+                    <div className="care-icon" style={{color:'#16a34a'}}>🧼</div>
+                    <span><strong>Vệ sinh:</strong> Rửa tay thường xuyên, cắt móng tay.</span>
+                 </div>
+                 <div className="care-item">
+                    <div className="care-icon" style={{color:'#16a34a'}}>🔥</div>
+                    <span><strong>Ăn uống:</strong> Ăn chín uống sôi tuyệt đối.</span>
+                 </div>
+                 <div className="care-item">
+                    <div className="care-icon" style={{color:'#16a34a'}}>🧹</div>
+                    <span><strong>Môi trường:</strong> Vệ sinh nhà cửa, xử lý rác.</span>
+                 </div>
+                 <div className="care-item">
+                    <div className="care-icon" style={{color:'#16a34a'}}>🛌</div>
+                    <span><strong>Nghỉ ngơi:</strong> Ngủ đủ giấc, giảm căng thẳng.</span>
+                 </div>
+                 <div className="care-item" style={{background:'#fef2f2', padding:'10px', borderRadius:'10px', marginTop:'15px'}}>
+                    <div className="care-icon" style={{color:'#dc2626'}}>⚠️</div>
+                    <span style={{color:'#dc2626', fontWeight:'bold'}}>Theo dõi: Báo bác sĩ ngay nếu sốt cao, đau bụng dữ dội.</span>
+                 </div>
               </div>
            </div>
         </div>
