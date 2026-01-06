@@ -1,0 +1,27 @@
+# CODEOWNERS — Automated PR review assignments
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default: Reviewer/Integrator reviews all PRs
+* @reviewer-agent
+
+# Domain layer
+packages/domain/** @domain-agent @reviewer-agent
+
+# Contracts layer
+packages/contracts/** @contracts-agent @reviewer-agent
+
+# Backend (API + Infra)
+apps/api/** @backend-agent @reviewer-agent
+packages/infra/** @backend-agent @reviewer-agent
+
+# Frontend (Web + UI)
+apps/web/** @frontend-agent @reviewer-agent
+packages/ui/** @frontend-agent @reviewer-agent
+
+# Documentation & Work management
+docs/** @planner-agent @reviewer-agent
+
+# CI/CD
+.github/** @reviewer-agent
+infra/ci/** @reviewer-agent
+

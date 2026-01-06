@@ -1,0 +1,28 @@
+{
+  "name": "dope",
+  "version": "0.0.1",
+  "private": true,
+  "description": "DOPE - Swipe-first memecoin trading game",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm -C apps/web dev",
+    "dev:api": "pnpm -C apps/api dev",
+    "dev:all": "pnpm run --parallel dev:api dev",
+    "build": "pnpm -r build",
+    "build:web": "pnpm -C apps/web build",
+    "build:api": "pnpm -C apps/api build",
+    "start:api": "pnpm -C apps/api start",
+    "preview": "pnpm -C apps/web preview",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "clean": "pnpm -r clean"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
+
