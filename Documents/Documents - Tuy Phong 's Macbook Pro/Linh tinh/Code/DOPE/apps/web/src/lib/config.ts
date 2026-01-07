@@ -12,7 +12,7 @@
 export const ENV = {
   isDev: import.meta.env.DEV,
   isProd: import.meta.env.PROD,
-  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
   env: import.meta.env.VITE_ENV || 'development',
 } as const
 
@@ -140,4 +140,57 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
   gasSponsored: false,
   iosSafeMode: false,
 }
+
+// Kill Switch / Maintenance config (from /v1/config)
+export type MaintenanceConfig = {
+  tradingDisabled: boolean
+  buyDisabled: boolean
+  sellDisabled: boolean
+  message?: string // Optional message to display
+}
+
+export const DEFAULT_MAINTENANCE_CONFIG: MaintenanceConfig = {
+  tradingDisabled: false,
+  buyDisabled: false,
+  sellDisabled: false,
+}
+
+// Remote config response type
+export type RemoteConfig = {
+  version: number
+  maintenance: {
+    trading_disabled: boolean
+    buy_disabled: boolean
+    sell_disabled: boolean
+    message?: string
+  }
+  risk: {
+    min_liquidity: number
+    min_age_minutes: number
+  }
+  deck: {
+    seen_ttl_hours: number
+    no_repeat_last_n: number
+  }
+  slippage: {
+    sell_default_bps: number
+    sell_max_user_bps: number
+  }
+}
+
+// Parse remote config into app format
+export function parseMaintenanceConfig(remote: RemoteConfig['maintenance']): MaintenanceConfig {
+  return {
+    tradingDisabled: remote.trading_disabled,
+    buyDisabled: remote.buy_disabled,
+    sellDisabled: remote.sell_disabled,
+    message: remote.message,
+  }
+}
+
+// API endpoints
+export const API_ENDPOINTS = {
+  config: `${ENV.apiBaseUrl}/v1/config`,
+  health: `${ENV.apiBaseUrl}/v1/health`,
+} as const
 

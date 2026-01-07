@@ -11,14 +11,15 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  X, Zap, TrendingUp, LogOut, Copy, ExternalLink, 
-  AlertCircle, CheckCircle 
+  X, Zap, TrendingUp, LogOut, Copy, CheckCircle 
 } from 'lucide-react'
 import { useState } from 'react'
 import { useWalletStore, selectIsConnected } from '@/stores/wallet-store'
 import { useTradeStore } from '@/stores/trade-store'
 import { GAS_CONFIG } from '@/lib/config'
 import { haptic } from '@/lib/telegram'
+import { DepositOverlay } from './DepositOverlay'
+import { WithdrawOverlay } from './WithdrawOverlay'
 
 interface WalletOverlayProps {
   isOpen: boolean
@@ -39,6 +40,8 @@ export function WalletOverlay({ isOpen, onClose, onOpenActivity }: WalletOverlay
   const recentTrades = trades.slice(0, 3)
 
   const [copied, setCopied] = useState(false)
+  const [isDepositOpen, setIsDepositOpen] = useState(false)
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false)
 
   const handleCopyAddress = async () => {
     if (!address) return
@@ -142,10 +145,22 @@ export function WalletOverlay({ isOpen, onClose, onOpenActivity }: WalletOverlay
 
                   {/* Quick Actions */}
                   <div className="grid grid-cols-2 gap-4 mb-6">
-                    <button className="bg-neon-green hover:bg-neon-greenDim text-black font-bold py-4 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wide transition-colors active:scale-95">
+                    <button 
+                      onClick={() => {
+                        haptic.impact('medium')
+                        setIsDepositOpen(true)
+                      }}
+                      className="bg-neon-green hover:bg-neon-greenDim text-black font-bold py-4 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wide transition-colors active:scale-95"
+                    >
                       <Zap size={18} /> Deposit
                     </button>
-                    <button className="bg-dope-surface hover:bg-dope-border text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wide border border-dope-border transition-colors active:scale-95">
+                    <button 
+                      onClick={() => {
+                        haptic.impact('medium')
+                        setIsWithdrawOpen(true)
+                      }}
+                      className="bg-dope-surface hover:bg-dope-border text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wide border border-dope-border transition-colors active:scale-95"
+                    >
                       <TrendingUp size={18} /> Withdraw
                     </button>
                   </div>
@@ -249,6 +264,18 @@ export function WalletOverlay({ isOpen, onClose, onOpenActivity }: WalletOverlay
               )}
             </div>
           </motion.div>
+
+          {/* Deposit Overlay */}
+          <DepositOverlay 
+            isOpen={isDepositOpen}
+            onClose={() => setIsDepositOpen(false)}
+          />
+
+          {/* Withdraw Overlay */}
+          <WithdrawOverlay 
+            isOpen={isWithdrawOpen}
+            onClose={() => setIsWithdrawOpen(false)}
+          />
         </>
       )}
     </AnimatePresence>

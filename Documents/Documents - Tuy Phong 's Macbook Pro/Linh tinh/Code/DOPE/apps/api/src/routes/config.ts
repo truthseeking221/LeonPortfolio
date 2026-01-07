@@ -57,8 +57,6 @@ export async function configRoutes(fastify: FastifyInstance): Promise<void> {
     Reply: ConfigResponse;
   }>('/config', {
     schema: {
-      description: 'Get app configuration including maintenance flags',
-      tags: ['System'],
       response: {
         200: {
           type: 'object',
@@ -121,4 +119,3 @@ export async function configRoutes(fastify: FastifyInstance): Promise<void> {
     };
   });
 }
-

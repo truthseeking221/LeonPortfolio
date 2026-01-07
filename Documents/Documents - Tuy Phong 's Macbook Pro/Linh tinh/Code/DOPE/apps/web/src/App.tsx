@@ -11,7 +11,8 @@ import { motion, useAnimation, useMotionValue } from 'framer-motion'
 import { 
   useAppStore, 
   selectIsBooting, 
-  selectIsReady 
+  selectIsBuyDisabled,
+  selectIsSellDisabled,
 } from '@/stores/app-store'
 import { 
   useGameStore, 
@@ -19,6 +20,7 @@ import {
   selectNextToken,
   selectIsHolding,
   selectHasPosition,
+  selectDeckLoading,
   type BuyLevel 
 } from '@/stores/game-store'
 import { useWalletStore, selectIsConnected, selectCanTrade } from '@/stores/wallet-store'
@@ -27,6 +29,7 @@ import {
   BootScreen, 
   TopHUD, 
   GasWarningBanner,
+  KillSwitchBanner,
   Card, 
   LevelRing, 
   CancelOverlay,
@@ -36,20 +39,31 @@ import {
   ActivityOverlay,
   SettingsOverlay,
   RiskSheet,
+  ErrorBoundary,
+  EmptyDeckState,
+  InsufficientBalanceOverlay,
+  ConsentModal,
+  NetworkDisconnectOverlay,
 } from '@/components'
 import { initTelegramWebApp, haptic } from '@/lib/telegram'
-import { GESTURE_CONFIG, UX_TIMING, BUY_PRESETS } from '@/lib/config'
+import { GESTURE_CONFIG, UX_TIMING, API_ENDPOINTS, parseMaintenanceConfig, type RemoteConfig } from '@/lib/config'
 
 type SendingStatus = 'SENDING' | 'SENT' | 'OPTIMISTIC' | 'CONFIRMED' | 'FAILED' | null
 
 export function App() {
   // === Stores ===
   const isBooting = useAppStore(selectIsBooting)
-  const isReady = useAppStore(selectIsReady)
   const startBoot = useAppStore((s) => s.startBoot)
   const completeBoot = useAppStore((s) => s.completeBoot)
   const setBootStatus = useAppStore((s) => s.setBootStatus)
+  const setMaintenance = useAppStore((s) => s.setMaintenance)
   const safeMode = useAppStore((s) => s.safeMode)
+  const isBuyDisabled = useAppStore(selectIsBuyDisabled)
+  const isSellDisabled = useAppStore(selectIsSellDisabled)
+  const hasConsent = useAppStore((s) => s.hasConsent)
+  const setHasConsent = useAppStore((s) => s.setHasConsent)
+  const connectionQuality = useAppStore((s) => s.connectionQuality)
+  const setIsOnline = useAppStore((s) => s.setIsOnline)
 
   const interactionState = useGameStore((s) => s.interactionState)
   const holdDuration = useGameStore((s) => s.holdDuration)
@@ -61,7 +75,6 @@ export function App() {
   const position = useGameStore((s) => s.position)
   const startHold = useGameStore((s) => s.startHold)
   const updateHold = useGameStore((s) => s.updateHold)
-  const cancelHold = useGameStore((s) => s.cancelHold)
   const releaseHold = useGameStore((s) => s.releaseHold)
   const setDragY = useGameStore((s) => s.setDragY)
   const resetToDiscovering = useGameStore((s) => s.resetToDiscovering)
@@ -69,8 +82,10 @@ export function App() {
   const prevCard = useGameStore((s) => s.prevCard)
   const setPosition = useGameStore((s) => s.setPosition)
   const gestureId = useGameStore((s) => s.gestureId)
+  const loadDeck = useGameStore((s) => s.loadDeck)
+  const refreshDeck = useGameStore((s) => s.refreshDeck)
+  const deckLoading = useGameStore(selectDeckLoading)
 
-  const balance = useWalletStore((s) => s.balance)
   const spendableBalance = useWalletStore((s) => s.spendableBalance)
   const isConnected = useWalletStore(selectIsConnected)
   const canTrade = useWalletStore(selectCanTrade)
@@ -90,6 +105,9 @@ export function App() {
   const [isActivityOpen, setIsActivityOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isRiskOpen, setIsRiskOpen] = useState(false)
+  const [isInsufficientBalanceOpen, setIsInsufficientBalanceOpen] = useState(false)
+  const [insufficientBalanceData, setInsufficientBalanceData] = useState({ required: 0, available: 0 })
+  const [isNetworkDisconnectOpen, setIsNetworkDisconnectOpen] = useState(false)
 
   const isMenuOpen = isWalletOpen || isActivityOpen || isSettingsOpen || isRiskOpen
 
@@ -115,9 +133,19 @@ export function App() {
       setBootStatus('initializing')
       initTelegramWebApp()
       
-      // Simulate loading config
+      // Load remote config (includes kill switch state)
       setBootStatus('loading_config')
-      await new Promise((r) => setTimeout(r, 300))
+      try {
+        const response = await fetch(API_ENDPOINTS.config)
+        if (response.ok) {
+          const config = await response.json() as RemoteConfig
+          // Parse and set maintenance/kill switch config
+          setMaintenance(parseMaintenanceConfig(config.maintenance))
+          console.log('[Boot] Config loaded:', config)
+        }
+      } catch (err) {
+        console.warn('[Boot] Failed to load remote config, using defaults:', err)
+      }
       
       // Simulate session restore
       setBootStatus('restoring_session')
@@ -126,6 +154,10 @@ export function App() {
       // Auto-connect wallet for demo
       setBootStatus('warming_providers')
       await connect()
+      
+      // Load deck from API
+      setBootStatus('loading_deck')
+      await loadDeck()
       
       // Ensure minimum boot time for UX
       const elapsed = Date.now() - (useAppStore.getState().bootStartTime || 0)
@@ -138,6 +170,27 @@ export function App() {
 
     boot()
   }, [])
+
+  // === Network Status Listener ===
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true)
+      setIsNetworkDisconnectOpen(false)
+    }
+    
+    const handleOffline = () => {
+      setIsOnline(false)
+      setIsNetworkDisconnectOpen(true)
+    }
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [setIsOnline])
 
   // === Gesture Handlers ===
   const triggerShake = useCallback((intensity: number) => {
@@ -162,6 +215,13 @@ export function App() {
           return
         }
 
+        // T-0010b: Check if buy is disabled via kill switch
+        if (isBuyDisabled) {
+          haptic.notification('error')
+          console.log('[KillSwitch] Buy disabled - blocking hold gesture')
+          return
+        }
+
         // Start hold
         startHold()
         haptic.impact('light')
@@ -183,7 +243,7 @@ export function App() {
         }, 16)
       }
     }, GESTURE_CONFIG.LONG_PRESS_DELAY)
-  }, [interactionState, isMenuOpen, hasPosition, isConnected, startHold, updateHold, triggerShake])
+  }, [interactionState, isMenuOpen, hasPosition, isConnected, isBuyDisabled, startHold, updateHold, triggerShake])
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     const distY = e.clientY - startPos.current.y
@@ -259,13 +319,20 @@ export function App() {
     isDragging.current = false
   }, [interactionState, isHolding, releaseHold, controls, y, shakeX, shakeY, nextCard, prevCard])
 
+  // === Deck Refresh ===
+  const handleDeckRefresh = useCallback(async () => {
+    await refreshDeck()
+  }, [refreshDeck])
+
   // === Trade Execution ===
   const executeBuy = async (level: BuyLevel, amount: number) => {
-    if (!level || !gestureId) return
+    if (!level || !gestureId || !currentToken) return
 
-    // Check spendable balance
+    // Check spendable balance - show overlay instead of silent fail
     if (!canTrade || spendableBalance < amount) {
       haptic.notification('error')
+      setInsufficientBalanceData({ required: amount, available: spendableBalance })
+      setIsInsufficientBalanceOpen(true)
       resetToDiscovering()
       return
     }
@@ -327,6 +394,13 @@ export function App() {
   const handlePanicSell = async () => {
     if (!position || isSelling) return
 
+    // T-0010b: Check if sell is disabled via kill switch
+    if (isSellDisabled) {
+      haptic.notification('error')
+      console.log('[KillSwitch] Sell disabled - blocking panic sell')
+      return
+    }
+
     setIsSelling(true)
     haptic.impact('heavy')
 
@@ -384,6 +458,26 @@ export function App() {
     setIsRiskOpen(false)
   }
 
+  // === Consent Handler ===
+  const handleConsentAccept = useCallback((version: string) => {
+    setHasConsent(true, version)
+    // Persist to local storage
+    localStorage.setItem('dope_consent', JSON.stringify({ version, timestamp: Date.now() }))
+  }, [setHasConsent])
+
+  // === Check stored consent on mount ===
+  useEffect(() => {
+    const stored = localStorage.getItem('dope_consent')
+    if (stored) {
+      try {
+        const { version } = JSON.parse(stored)
+        setHasConsent(true, version)
+      } catch {
+        // Invalid stored consent
+      }
+    }
+  }, [setHasConsent])
+
   // === Render ===
   if (isBooting) {
     return <BootScreen />
@@ -391,8 +485,15 @@ export function App() {
 
   const isArming = interactionState === 'HOLD_ARMED' || interactionState === 'HOLD_POSSIBLE'
   const isCanceled = interactionState === 'HOLD_CANCELED'
+  const isDeckEmpty = !currentToken
+
+  // Show consent modal if not yet accepted
+  if (!hasConsent) {
+    return <ConsentModal isOpen={true} onAccept={handleConsentAccept} />
+  }
 
   return (
+    <ErrorBoundary>
     <div 
       className="relative w-full h-screen bg-dope-black text-white overflow-hidden select-none touch-none font-sans"
       onContextMenu={(e) => e.preventDefault()}
@@ -411,6 +512,9 @@ export function App() {
         onOpenSettings={() => setIsSettingsOpen(true)} 
       />
       <GasWarningBanner />
+      
+      {/* Kill Switch Banner (T-0010b) */}
+      <KillSwitchBanner />
 
       {/* Main content area */}
       <motion.div 
@@ -423,27 +527,40 @@ export function App() {
         }}
         onClick={isMenuOpen ? closeAllMenus : undefined}
       >
-        {/* Next card (behind) */}
-        <Card 
-          token={nextToken} 
-          isArming={false}
-          isCanceled={false}
-          isNext={true} 
-        />
-
-        {/* Current card */}
-        <motion.div 
-          className="w-full h-full relative"
-          style={{ y }}
-          animate={controls}
-        >
-          <Card 
-            token={currentToken}
-            isArming={isArming}
-            isCanceled={isCanceled}
-            onOpenRisk={() => setIsRiskOpen(true)}
+        {/* Empty deck state */}
+        {isDeckEmpty ? (
+          <EmptyDeckState 
+            isLoading={deckLoading}
+            isOffline={connectionQuality === 'offline'}
+            onRefresh={handleDeckRefresh}
           />
-        </motion.div>
+        ) : currentToken && (
+          <>
+            {/* Next card (behind) */}
+            {nextToken && (
+              <Card 
+                token={nextToken} 
+                isArming={false}
+                isCanceled={false}
+                isNext={true} 
+              />
+            )}
+
+            {/* Current card */}
+            <motion.div 
+              className="w-full h-full relative"
+              style={{ y }}
+              animate={controls}
+            >
+              <Card 
+                token={currentToken}
+                isArming={isArming}
+                isCanceled={isCanceled}
+                onOpenRisk={() => setIsRiskOpen(true)}
+              />
+            </motion.div>
+          </>
+        )}
 
         {/* Level Ring */}
         <LevelRing 
@@ -471,6 +588,28 @@ export function App() {
         )}
       </motion.div>
 
+      {/* Insufficient Balance Overlay */}
+      <InsufficientBalanceOverlay
+        isOpen={isInsufficientBalanceOpen}
+        requiredAmount={insufficientBalanceData.required}
+        availableAmount={insufficientBalanceData.available}
+        onClose={() => setIsInsufficientBalanceOpen(false)}
+        onDeposit={() => {
+          setIsInsufficientBalanceOpen(false)
+          setIsWalletOpen(true)
+        }}
+      />
+
+      {/* Network Disconnect Overlay */}
+      <NetworkDisconnectOverlay
+        isOpen={isNetworkDisconnectOpen && connectionQuality === 'offline'}
+        onRetry={() => {
+          // Trigger reconnection attempt
+          window.location.reload()
+        }}
+        onDismiss={() => setIsNetworkDisconnectOpen(false)}
+      />
+
       {/* Overlays */}
       <WalletOverlay 
         isOpen={isWalletOpen}
@@ -491,9 +630,10 @@ export function App() {
       <RiskSheet 
         isOpen={isRiskOpen}
         onClose={() => setIsRiskOpen(false)}
-        token={currentToken}
+        token={currentToken ?? null}
       />
     </div>
+    </ErrorBoundary>
   )
 }
 

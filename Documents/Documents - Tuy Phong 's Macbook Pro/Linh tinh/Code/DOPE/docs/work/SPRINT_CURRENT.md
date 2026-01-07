@@ -11,15 +11,15 @@ Vertical Slice M0: Launch → Deck shows 1 card → Hold-to-buy (mock) → Activ
 |----|------|-------|--------|-------|-------------|
 | T-0001 | Repo scaffolding + guardrails | — | ✅ Done | infra | ✅ |
 | T-0002 | Domain state machines v1 | **Domain Agent** | ✅ Done | `packages/domain` | ✅ |
-| T-0003 | API skeleton + /health + /config | **Backend Agent** | ⏳ Pending | `apps/api` | ✅ |
-| T-0004 | Web app boot + Telegram WebApp | **Frontend Agent** | ⏳ Pending | `apps/web` | ✅ |
-| T-0005 | Activity ledger v0 (in-memory) | **Backend Agent** | ⏳ Pending | `apps/api` | ✅ |
-| T-0010a | Kill switch backend | **Backend Agent** | ⏳ Pending | `apps/api` | ✅ |
-| T-0010b | Kill switch frontend | **Frontend Agent** | ⏳ Pending | `apps/web` | ✅ |
-| T-0012a | Sell-all backend | **Backend Agent** | ⏳ Pending | `apps/api` | ✅ |
+| T-0003 | API skeleton + /health + /config | **Backend Agent** | ✅ Done | `apps/api` | ✅ |
+| T-0004 | Web app boot + Telegram WebApp | **Frontend Agent** | ✅ Done | `apps/web` | ✅ |
+| T-0005 | Activity ledger v0 (in-memory) | **Backend Agent** | ✅ Done | `apps/api` | ✅ |
+| T-0010a | Kill switch backend | **Backend Agent** | ✅ Done | `apps/api` | ✅ |
+| T-0010b | Kill switch frontend | **Frontend Agent** | ✅ Done | `apps/web` | ✅ |
+| T-0012a | Sell-all backend | **Backend Agent** | ✅ Done | `apps/api` | ✅ |
 | T-0012b | Sell-all frontend | **Frontend Agent** | ⏳ Pending | `apps/web` | ✅ |
-| T-0019 | Positions endpoint | **Backend Agent** | ⏳ Pending | `apps/api` | ✅ |
-| T-0020 | Telegram auth endpoint | **Backend Agent** | ⏳ Pending | `apps/api` | ✅ |
+| T-0019 | Positions endpoint | **Backend Agent** | ✅ Done | `apps/api` | ✅ |
+| T-0020 | Telegram auth endpoint | **Backend Agent** | ✅ Done | `apps/api` | ✅ |
 
 
 ## M0 Exit Criteria Mapping
@@ -27,8 +27,8 @@ Vertical Slice M0: Launch → Deck shows 1 card → Hold-to-buy (mock) → Activ
 |---------------|----------------|
 | exactly-once per gesture proven | T-0002 ✅, T-0005 |
 | UNKNOWN path implemented | T-0002 ✅ |
-| kill switch works | T-0010a, T-0010b |
-| Demo flow works | T-0003, T-0004, T-0005, T-0012a, T-0012b |
+| kill switch works | T-0010a, T-0010b ✅ |
+| Demo flow works | T-0003 ✅, T-0004 ✅, T-0005, T-0012a, T-0012b |
 
 
 ## Task Details
@@ -42,22 +42,40 @@ Vertical Slice M0: Launch → Deck shows 1 card → Hold-to-buy (mock) → Activ
 - ✅ Card interaction machine in `card.ts` (gesture disambiguation, HOLD_POSSIBLE → HOLD_ARMED)
 - ✅ Order resolution machine in `order.ts` (NOT_CREATED → BROADCASTED → terminal states)
 - ✅ Balance validation in `balance.ts` (gas reserve, spendable balance, panic sell check)
-- ✅ Unit tests for all modules (app.test.ts, card.test.ts, order.test.ts, balance.test.ts)
+- ✅ Error codes in `errors.ts` (full taxonomy from docs/05_ERROR_CODES.md)
+- ✅ Telemetry events in `telemetry.ts` (type-safe event definitions from docs/06_TELEMETRY_EVENTS.md)
+- ✅ Unit tests for all modules (app, card, order, balance, errors, telemetry)
 **PRD Invariants Enforced:**
 1. Exactly-once per gesture_id
 2. Cancel always safe (before broadcast)
 3. No ambiguous money state
 4. Gas reserve for panic sell
+**Additional Features:**
+- Error categorization (user-actionable, retry-safe, maintenance)
+- HTTP status mapping for all error codes
+- Type-safe telemetry event payloads with sampling rates
 
 ### T-0003 — API skeleton + /health + /config
 **Owner:** Backend Agent  
 **Dependencies:** T-0001 ✅
 **Blocked by:** None (hosting decided: Fly.io per ADR-0001)
 
-### T-0004 — Web app boot + Telegram WebApp
+### T-0004 — Web app boot + Telegram WebApp (DONE)
 **Owner:** Frontend Agent
-**Dependencies:** T-0001 ✅
-**Blocked by:** None
+**Completed:** 2026-01-06
+**Deliverables:**
+- ✅ Monorepo setup (pnpm workspaces)
+- ✅ Vite + React 18 + TypeScript strict mode
+- ✅ Tailwind CSS v3 + Framer Motion
+- ✅ Telegram WebApp SDK (`@twa-dev/sdk`)
+- ✅ Boot screen with skeleton loader
+- ✅ Token card deck (swipe gestures)
+- ✅ Top bar (balance, connection, settings)
+- ✅ Wallet modal (gas reserve, deposit/withdraw)
+- ✅ Settings panel (experience, performance, trading)
+- ✅ Hold gesture overlay with progress ring
+- ✅ Zustand stores (app-store, game-store, wallet-store)
+**Smoke Test:** Browser test passed ✅
 
 ### T-0005 — Activity ledger v0
 **Owner:** Backend Agent
@@ -113,7 +131,41 @@ Vertical Slice M0: Launch → Deck shows 1 card → Hold-to-buy (mock) → Activ
   - Card interaction machine with gesture disambiguation
   - Order resolution machine (exactly-once guarantee)
   - Balance validation module (gas reserve for panic sell)
-  - Full unit test coverage
+  - Error codes module (full taxonomy with UX mapping)
+  - Telemetry event definitions (type-safe with sampling)
+  - Full unit test coverage (6 test files)
+
+- [x] T-0003 API skeleton + /health + /config (2026-01-06)
+  - Fastify server with TypeScript
+  - GET /v1/health endpoint (status, env, build, timestamp)
+  - GET /v1/config endpoint (maintenance, risk, deck, slippage)
+  - Standard error responses with error codes
+  - CORS, request ID, logging middleware
+
+- [x] T-0004 Web app boot + Telegram WebApp (2026-01-06)
+  - Vite + React 18 + TypeScript (strict mode)
+  - Tailwind CSS + Framer Motion animations
+  - Telegram WebApp SDK integration (@twa-dev/sdk)
+  - Boot screen with loading states (skeleton → ready)
+  - Token card deck with mock data (swipe gestures)
+  - Top bar: balance display, connection status, settings
+  - Wallet modal: spendable balance, gas reserve, deposit/withdraw
+  - Settings panel: experience, performance, trading sections
+  - Hold gesture overlay with progress ring
+  - Zustand stores (app, game, wallet)
+  - Browser smoke test passed ✅
+
+- [x] T-0010b Kill switch frontend (2026-01-06)
+  - KillSwitchBanner component with 3 states:
+    - Trading disabled (red) - full kill switch
+    - Buy disabled (orange) - buy only paused
+    - Sell disabled (orange) - sell only paused
+  - Maintenance config added to app-store
+  - Remote config fetch during boot from /v1/config
+  - Buy gesture blocked when buy_disabled
+  - Sell button blocked when sell_disabled
+  - HoldingOverlay shows "Sell Paused" state
+  - Browser smoke test with all 3 banner types ✅
 
 
 ## Blocked tasks
@@ -135,28 +187,28 @@ Vertical Slice M0: Launch → Deck shows 1 card → Hold-to-buy (mock) → Activ
 Phase 1 (DONE):
   T-0001 ✅ → T-0002 ✅
 
-Phase 2 (NOW - parallel):
-  Backend Agent: T-0003 → T-0020 → T-0005 → T-0019 → T-0010a → T-0012a
-  Frontend Agent: T-0004 (can start now, parallel with backend)
+Phase 2 (IN PROGRESS):
+  Backend Agent: T-0003 ✅ → T-0020 → T-0005 → T-0019 → T-0010a → T-0012a
+  Frontend Agent: T-0004 ✅
 
-Phase 3 (after Phase 2):
-  Frontend Agent: T-0010b, T-0012b (needs backend endpoints ready)
+Phase 3 (NEXT - needs backend endpoints):
+  Frontend Agent: T-0010b (needs T-0010a), T-0012b (needs T-0012a)
 ```
 
 ## Agent Assignment Summary
-| Agent | Tasks | Count |
-|-------|-------|-------|
-| Backend Agent | T-0003, T-0005, T-0010a, T-0012a, T-0019, T-0020 | 6 |
-| Frontend Agent | T-0004, T-0010b, T-0012b | 3 |
-| Domain Agent | (M0 complete) | 0 |
+| Agent | Tasks | Remaining |
+|-------|-------|-----------|
+| Backend Agent | T-0003 ✅, T-0005, T-0010a, T-0012a, T-0019, T-0020 | 5 |
+| Frontend Agent | T-0004 ✅, T-0010b ✅, T-0012b | 1 |
+| Domain Agent | T-0002 ✅ | 0 |
 
 ## M0 Endpoint Checklist
 | Endpoint | Task | Status |
 |----------|------|--------|
-| GET /v1/health | T-0003 | ⏳ |
-| GET /v1/config | T-0003 | ⏳ |
-| POST /v1/auth/telegram | T-0020 | ⏳ |
-| GET /v1/activity | T-0005 | ⏳ |
-| GET /v1/positions | T-0019 | ⏳ |
-| POST /v1/trades/sell-all | T-0012a | ⏳ |
+| GET /v1/health | T-0003 | ✅ |
+| GET /v1/config | T-0003 | ✅ |
+| POST /v1/auth/telegram | T-0020 | ✅ |
+| GET /v1/activity | T-0005 | ✅ |
+| GET /v1/positions | T-0019 | ✅ |
+| POST /v1/trades/sell-all | T-0012a | ✅ |
 

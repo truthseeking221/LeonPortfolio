@@ -35,8 +35,6 @@ export function TopHUD({ onOpenWallet, onOpenSettings }: TopHUDProps) {
     offline: 'bg-neon-pink',
   }[connectionQuality]
 
-  const networkIcon = connectionQuality === 'offline' ? WifiOff : Wifi
-
   return (
     <div className="absolute top-0 left-0 right-0 z-50 flex justify-between items-center px-4 py-4 pt-safe pointer-events-none">
       {/* Wallet Pill */}

@@ -29,8 +29,6 @@ export async function healthRoutes(fastify: FastifyInstance): Promise<void> {
     Reply: HealthResponse;
   }>('/health', {
     schema: {
-      description: 'Health check endpoint',
-      tags: ['System'],
       response: {
         200: {
           type: 'object',
@@ -55,4 +53,3 @@ export async function healthRoutes(fastify: FastifyInstance): Promise<void> {
     };
   });
 }
-

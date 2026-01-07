@@ -69,21 +69,30 @@ async function start() {
     });
 
     console.log(`
-╔══════════════════════════════════════════════════════════════╗
-║                                                              ║
-║   🚀 DOPE API Server                                         ║
-║                                                              ║
-║   Environment: ${config.env.padEnd(43)}║
-║   Build:       ${config.buildSha.padEnd(43)}║
-║   Server:      http://${config.host}:${config.port}                          ║
-║                                                              ║
-║   Endpoints:                                                 ║
-║   • GET  /v1/health  - Health check                          ║
-║   • GET  /v1/config  - App configuration                     ║
-║                                                              ║
-║   Kill Switch: ${config.maintenance.tradingDisabled ? '🔴 ACTIVE' : '🟢 OFF   '}                                 ║
-║                                                              ║
-╚══════════════════════════════════════════════════════════════╝
+╔═══════════════════════════════════════════════════════════════════════╗
+║                                                                       ║
+║   🚀 DOPE API Server                                                  ║
+║                                                                       ║
+║   Environment: ${config.env.padEnd(52)}║
+║   Build:       ${config.buildSha.padEnd(52)}║
+║   Server:      http://${config.host}:${config.port}                                   ║
+║                                                                       ║
+║   Endpoints:                                                          ║
+║   • GET  /v1/health            - Health check                         ║
+║   • GET  /v1/config            - App configuration                    ║
+║   • POST /v1/auth/telegram     - Telegram authentication              ║
+║   • GET  /v1/wallet            - Wallet info + deposit address        ║
+║   • GET  /v1/wallet/balance    - Current balance                      ║
+║   • POST /v1/wallet/deposit    - Deposit TON (mock)                   ║
+║   • POST /v1/wallet/withdraw   - Withdraw TON                         ║
+║   • GET  /v1/wallet/history    - Deposit/Withdraw history             ║
+║   • GET  /v1/activity          - Trade activity                       ║
+║   • GET  /v1/positions         - Token holdings                       ║
+║   • POST /v1/trades/sell-all   - Sell all of a token                  ║
+║                                                                       ║
+║   Kill Switch: ${config.maintenance.tradingDisabled ? '🔴 ACTIVE' : '🟢 OFF   '}                                          ║
+║                                                                       ║
+╚═══════════════════════════════════════════════════════════════════════╝
 `);
 
   } catch (err) {

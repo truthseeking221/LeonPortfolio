@@ -11,6 +11,7 @@
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 import { BUY_PRESETS, GESTURE_CONFIG } from '@/lib/config'
+import { fetchDeckBatch, type ApiCard } from '@/lib/api'
 
 // Card interaction states (PRD §4.2)
 export type CardInteractionState = 
@@ -79,6 +80,8 @@ export interface GameState {
   // Deck
   deckIndex: number
   deck: Token[]
+  deckLoading: boolean
+  deckError: string | null
   
   // Current position (if holding)
   position: Position | null
@@ -92,7 +95,7 @@ export interface GameState {
   
   // Hold gesture
   startHold: () => void
-  updateHold: (durationMs: number) => void
+  updateHold: (durationMs: number) => boolean
   cancelHold: () => void
   releaseHold: () => { level: BuyLevel; amount: number } | null
   
@@ -105,6 +108,10 @@ export interface GameState {
   nextCard: () => void
   prevCard: () => void
   setDeckIndex: (index: number) => void
+  
+  // Deck loading
+  loadDeck: () => Promise<void>
+  refreshDeck: () => Promise<void>
   
   // Position
   setPosition: (position: Position | null) => void
@@ -130,53 +137,51 @@ const generateGestureId = (): string => {
   return `g_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
 }
 
-// Mock deck data
-const MOCK_DECK: Token[] = [
-  {
-    id: 'pepe',
-    symbol: 'PEPE',
-    name: 'Pepe The Frog',
-    price: 0.0000420,
-    change24h: 12.4,
-    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop',
-    color: '#4ade80',
-    stats: { marketCap: '$4.2B', volume: '$240M', holders: '150k' },
-    risk: { level: 'LOW', signals: ['Top 10 CEX', 'Renounced', 'High Liq'] },
-  },
-  {
-    id: 'bonk',
-    symbol: 'BONK',
-    name: 'Bonk Inu',
-    price: 0.0000156,
-    change24h: 8.2,
-    image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=1000&auto=format&fit=crop',
-    color: '#fbbf24',
-    stats: { marketCap: '$1.8B', volume: '$120M', holders: '320k' },
-    risk: { level: 'MED', signals: ['Community Takeover', 'Vol Spike'] },
-  },
-  {
-    id: 'wif',
-    symbol: 'WIF',
-    name: 'Dogwifhat',
-    price: 2.45,
-    change24h: -3.1,
-    image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1000&auto=format&fit=crop',
-    color: '#f97316',
-    stats: { marketCap: '$2.1B', volume: '$500M', holders: '80k' },
-    risk: { level: 'LOW', signals: ['Blue Chip', 'Hat stays on'] },
-  },
-  {
-    id: 'doge',
-    symbol: 'DOGE',
-    name: 'Dogecoin',
-    price: 0.12,
-    change24h: 5.7,
-    image: 'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?q=80&w=1000&auto=format&fit=crop',
-    color: '#eab308',
-    stats: { marketCap: '$15B', volume: '$1.2B', holders: '5M' },
-    risk: { level: 'LOW', signals: ['OG Meme', 'Elon Approved'] },
-  },
-]
+// Transform API card to UI Token format
+function transformApiCard(card: ApiCard): Token {
+  const price = parseFloat(card.price_usd)
+  const volume = parseFloat(card.volume_24h_usd)
+  const liquidity = parseFloat(card.liquidity_usd)
+  
+  // Determine risk level from signals
+  let riskLevel: 'LOW' | 'MED' | 'HIGH' = 'LOW'
+  if (card.risk_signals.includes('LOW_LIQUIDITY') || card.risk_signals.includes('HIGH_VOLATILITY')) {
+    riskLevel = 'HIGH'
+  } else if (card.risk_signals.includes('NEW_TOKEN') || card.risk_signals.includes('PRICE_DUMP')) {
+    riskLevel = 'MED'
+  }
+
+  // Format numbers for display
+  const formatValue = (val: number): string => {
+    if (val >= 1e9) return `$${(val / 1e9).toFixed(1)}B`
+    if (val >= 1e6) return `$${(val / 1e6).toFixed(1)}M`
+    if (val >= 1e3) return `$${(val / 1e3).toFixed(1)}K`
+    return `$${val.toFixed(0)}`
+  }
+
+  // Generate color from symbol hash
+  const colors = ['#4ade80', '#fbbf24', '#f97316', '#eab308', '#22d3ee', '#a855f7', '#ec4899']
+  const colorIndex = card.symbol.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % colors.length
+
+  return {
+    id: card.token_id,
+    symbol: card.symbol,
+    name: card.name,
+    price,
+    change24h: card.change_24h_pct,
+    image: card.media_url,
+    color: colors[colorIndex],
+    stats: {
+      marketCap: formatValue(liquidity * 10), // Estimate mcap as 10x liquidity
+      volume: formatValue(volume),
+      holders: 'N/A', // Not available from API
+    },
+    risk: {
+      level: riskLevel,
+      signals: card.risk_signals.map(s => s.replace(/_/g, ' ')),
+    },
+  }
+}
 
 export const useGameStore = create<GameState>()(
   subscribeWithSelector((set, get) => ({
@@ -193,7 +198,9 @@ export const useGameStore = create<GameState>()(
     isInCancelZone: false,
     
     deckIndex: 0,
-    deck: MOCK_DECK,
+    deck: [], // Start empty, load from API
+    deckLoading: false,
+    deckError: null,
     
     position: null,
     
@@ -219,7 +226,7 @@ export const useGameStore = create<GameState>()(
     
     updateHold: (durationMs) => {
       const current = get().interactionState
-      if (current !== 'HOLD_POSSIBLE' && current !== 'HOLD_ARMED') return
+      if (current !== 'HOLD_POSSIBLE' && current !== 'HOLD_ARMED') return false
       
       const newLevel = getLevelFromDuration(durationMs)
       const prevLevel = get().currentLevel
@@ -297,6 +304,59 @@ export const useGameStore = create<GameState>()(
     
     setDeckIndex: (index) => set({ deckIndex: index }),
     
+    // Load deck from API
+    loadDeck: async () => {
+      const { deckLoading, deck } = get()
+      if (deckLoading || deck.length > 0) return // Already loading or loaded
+      
+      set({ deckLoading: true, deckError: null })
+      
+      try {
+        const response = await fetchDeckBatch(20) // API max is 20
+        const tokens = response.cards.map(transformApiCard)
+        
+        set({
+          deck: tokens,
+          deckLoading: false,
+          deckError: null,
+        })
+        
+        console.log('[Deck] Loaded', tokens.length, 'tokens from API')
+      } catch (error) {
+        console.error('[Deck] Failed to load:', error)
+        set({
+          deckLoading: false,
+          deckError: error instanceof Error ? error.message : 'Failed to load deck',
+        })
+      }
+    },
+    
+    // Refresh deck (force reload)
+    refreshDeck: async () => {
+      set({ deckLoading: true, deckError: null })
+      
+      try {
+        const seenIds = get().deck.slice(0, get().deckIndex).map(t => t.id)
+        const response = await fetchDeckBatch(20, seenIds) // API max is 20
+        const tokens = response.cards.map(transformApiCard)
+        
+        set({
+          deck: tokens,
+          deckIndex: 0,
+          deckLoading: false,
+          deckError: null,
+        })
+        
+        console.log('[Deck] Refreshed with', tokens.length, 'tokens')
+      } catch (error) {
+        console.error('[Deck] Failed to refresh:', error)
+        set({
+          deckLoading: false,
+          deckError: error instanceof Error ? error.message : 'Failed to refresh deck',
+        })
+      }
+    },
+    
     setPosition: (position) => set({ 
       position,
       interactionState: position ? 'HOLDING_POSITION' : 'DISCOVERING',
@@ -357,4 +417,11 @@ export const selectIsCommitting = (state: GameState) =>
 
 export const selectHasPosition = (state: GameState) =>
   state.interactionState === 'HOLDING_POSITION' && state.position !== null
+
+export const selectDeckLoading = (state: GameState) => state.deckLoading
+
+export const selectDeckError = (state: GameState) => state.deckError
+
+export const selectIsDeckEmpty = (state: GameState) => 
+  !state.deckLoading && state.deck.length === 0
 

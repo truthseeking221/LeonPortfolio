@@ -13,9 +13,9 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   TrendingUp, TrendingDown, Users, BarChart3, Activity, 
-  Info, Crosshair, ShieldCheck, ShieldAlert 
+  Info, Crosshair, ShieldCheck, ShieldAlert, ImageOff 
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { Token } from '@/stores/game-store'
 import { useAppStore } from '@/stores/app-store'
 
@@ -30,16 +30,38 @@ interface CardProps {
 export function Card({ token, isArming, isCanceled, isNext = false, onOpenRisk }: CardProps) {
   const safeMode = useAppStore((s) => s.safeMode)
   const isPositiveChange = token.change24h >= 0
+  const [imageError, setImageError] = useState(false)
+  const [imageLoading, setImageLoading] = useState(true)
+
+  // Reset image state when token changes
+  useEffect(() => {
+    setImageError(false)
+    setImageLoading(true)
+  }, [token.id])
+
+  const handleImageError = useCallback(() => {
+    setImageError(true)
+    setImageLoading(false)
+  }, [])
+
+  const handleImageLoad = useCallback(() => {
+    setImageLoading(false)
+  }, [])
 
   // Next card (preview behind current)
   if (isNext) {
     return (
       <div className="absolute inset-0 w-full h-full bg-dope-dark rounded-lg border border-dope-border scale-95 translate-y-4 opacity-50 overflow-hidden pointer-events-none">
-        <img 
-          src={token.image} 
-          className="w-full h-full object-cover grayscale opacity-30" 
-          alt="" 
-        />
+        {imageError ? (
+          <MediaFallback color={token.color} />
+        ) : (
+          <img 
+            src={token.image} 
+            className="w-full h-full object-cover grayscale opacity-30" 
+            alt=""
+            onError={() => setImageError(true)}
+          />
+        )}
       </div>
     )
   }
@@ -55,18 +77,30 @@ export function Card({ token, isArming, isCanceled, isNext = false, onOpenRisk }
     >
       {/* Media Layer */}
       <div className="absolute inset-0 pointer-events-none">
-        <motion.img
-          src={token.image}
-          className="w-full h-full object-cover"
-          alt={token.name}
-          animate={{
-            scale: isArming ? 1.05 : 1,
-            filter: isArming 
-              ? 'grayscale(100%) brightness(40%)' 
-              : 'grayscale(30%) brightness(70%)',
-          }}
-          transition={{ duration: 0.3 }}
-        />
+        {/* Loading skeleton */}
+        {imageLoading && !imageError && (
+          <div className="absolute inset-0 bg-dope-surface animate-pulse" />
+        )}
+        
+        {/* Fallback for failed images */}
+        {imageError ? (
+          <MediaFallback color={token.color} isArming={isArming} />
+        ) : (
+          <motion.img
+            src={token.image}
+            className="w-full h-full object-cover"
+            alt={token.name}
+            onError={handleImageError}
+            onLoad={handleImageLoad}
+            animate={{
+              scale: isArming ? 1.05 : 1,
+              filter: isArming 
+                ? 'grayscale(100%) brightness(40%)' 
+                : 'grayscale(30%) brightness(70%)',
+            }}
+            transition={{ duration: 0.3 }}
+          />
+        )}
         
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/60" />
@@ -281,6 +315,75 @@ function GlitchText({
         {text}
       </motion.span>
     </h1>
+  )
+}
+
+// Media fallback when image fails to load
+function MediaFallback({ 
+  color, 
+  isArming = false 
+}: { 
+  color: string
+  isArming?: boolean
+}) {
+  return (
+    <motion.div
+      className="absolute inset-0 flex items-center justify-center"
+      animate={{
+        scale: isArming ? 1.05 : 1,
+        filter: isArming 
+          ? 'brightness(40%)' 
+          : 'brightness(70%)',
+      }}
+      transition={{ duration: 0.3 }}
+      style={{
+        background: `
+          linear-gradient(135deg, 
+            ${color}15 0%, 
+            rgba(15, 15, 23, 1) 50%, 
+            ${color}10 100%
+          )
+        `,
+      }}
+    >
+      {/* Animated gradient orbs */}
+      <motion.div
+        className="absolute w-64 h-64 rounded-full blur-[80px]"
+        style={{ background: `${color}20` }}
+        animate={{
+          x: [0, 30, 0],
+          y: [0, -20, 0],
+          scale: [1, 1.2, 1],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+      <motion.div
+        className="absolute w-48 h-48 rounded-full blur-[60px]"
+        style={{ background: `${color}15` }}
+        animate={{
+          x: [0, -20, 0],
+          y: [0, 30, 0],
+          scale: [1.2, 1, 1.2],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+      
+      {/* Fallback icon */}
+      <div className="relative z-10 flex flex-col items-center gap-2 text-dope-muted">
+        <ImageOff size={32} className="opacity-30" />
+        <span className="text-[10px] font-mono uppercase tracking-widest opacity-50">
+          Image unavailable
+        </span>
+      </div>
+    </motion.div>
   )
 }
 

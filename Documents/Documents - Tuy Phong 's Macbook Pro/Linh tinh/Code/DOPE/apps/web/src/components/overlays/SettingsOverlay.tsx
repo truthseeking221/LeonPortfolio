@@ -10,7 +10,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  X, Volume2, VolumeX, Smartphone, ShieldAlert, 
+  X, Volume2, VolumeX, ShieldAlert, 
   Sparkles, Gauge, Zap, AlertTriangle
 } from 'lucide-react'
 import { useAppStore } from '@/stores/app-store'
@@ -185,7 +185,7 @@ export function SettingsOverlay({ isOpen, onClose }: SettingsOverlayProps) {
 }
 
 interface SettingToggleProps {
-  icon: React.ComponentType<{ size?: number; className?: string }>
+  icon: React.ElementType
   label: string
   description: string
   isActive: boolean
@@ -232,7 +232,7 @@ function SettingToggle({
 interface PerfModeButtonProps {
   mode: string
   label: string
-  icon: React.ComponentType<{ size?: number; className?: string }>
+  icon: React.ElementType
   isActive: boolean
   onSelect: () => void
 }

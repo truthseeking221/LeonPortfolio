@@ -9,7 +9,12 @@
 
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
-import { DEFAULT_FEATURE_FLAGS, type FeatureFlags } from '@/lib/config'
+import { 
+  DEFAULT_FEATURE_FLAGS, 
+  DEFAULT_MAINTENANCE_CONFIG,
+  type FeatureFlags,
+  type MaintenanceConfig,
+} from '@/lib/config'
 
 // App lifecycle states (PRD §4.1)
 export type AppLifecycleState = 
@@ -26,6 +31,7 @@ export type BootStatus =
   | 'loading_config'
   | 'restoring_session'
   | 'warming_providers'
+  | 'loading_deck'
   | 'ready'
   | 'failed'
 
@@ -39,6 +45,9 @@ export interface AppState {
   // Config (from remote)
   featureFlags: FeatureFlags
   configVersion: string | null
+  
+  // Kill Switch / Maintenance (PRD F-10b)
+  maintenance: MaintenanceConfig
   
   // Network status
   isOnline: boolean
@@ -62,6 +71,7 @@ export interface AppState {
   setBootStatus: (status: BootStatus, error?: string) => void
   setFeatureFlags: (flags: Partial<FeatureFlags>) => void
   setConfigVersion: (version: string) => void
+  setMaintenance: (config: MaintenanceConfig) => void
   setIsOnline: (online: boolean) => void
   setConnectionQuality: (quality: 'good' | 'degraded' | 'offline') => void
   setHasConsent: (consent: boolean, version?: string) => void
@@ -91,6 +101,9 @@ export const useAppStore = create<AppState>()(
     featureFlags: DEFAULT_FEATURE_FLAGS,
     configVersion: null,
     
+    // Kill Switch / Maintenance
+    maintenance: DEFAULT_MAINTENANCE_CONFIG,
+    
     isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
     connectionQuality: 'good',
     
@@ -116,6 +129,8 @@ export const useAppStore = create<AppState>()(
     })),
     
     setConfigVersion: (version) => set({ configVersion: version }),
+    
+    setMaintenance: (config) => set({ maintenance: config }),
     
     setIsOnline: (online) => set({ 
       isOnline: online,
@@ -188,10 +203,29 @@ export const selectIsReady = (state: AppState) =>
 export const selectCanTrade = (state: AppState) => 
   state.lifecycleState === 'READY' && 
   state.featureFlags.tradingEnabled &&
+  !state.maintenance.tradingDisabled &&
   state.hasConsent
 
 export const selectIsDegraded = (state: AppState) =>
   state.lifecycleState === 'OFFLINE_DEGRADED' ||
   state.lifecycleState === 'MAINTENANCE' ||
   state.connectionQuality !== 'good'
+
+// Kill Switch Selectors (T-0010b)
+export const selectIsTradingDisabled = (state: AppState) =>
+  state.maintenance.tradingDisabled
+
+export const selectIsBuyDisabled = (state: AppState) =>
+  state.maintenance.tradingDisabled || state.maintenance.buyDisabled
+
+export const selectIsSellDisabled = (state: AppState) =>
+  state.maintenance.tradingDisabled || state.maintenance.sellDisabled
+
+export const selectMaintenanceMessage = (state: AppState) =>
+  state.maintenance.message
+
+export const selectHasAnyKillSwitch = (state: AppState) =>
+  state.maintenance.tradingDisabled ||
+  state.maintenance.buyDisabled ||
+  state.maintenance.sellDisabled
 

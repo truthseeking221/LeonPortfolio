@@ -10,9 +10,9 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { TrendingUp, TrendingDown, Zap, AlertTriangle } from 'lucide-react'
+import { TrendingUp, TrendingDown, Zap, ShieldOff } from 'lucide-react'
 import { useGameStore, type Position } from '@/stores/game-store'
-import { useAppStore } from '@/stores/app-store'
+import { useAppStore, selectIsSellDisabled } from '@/stores/app-store'
 import { haptic } from '@/lib/telegram'
 
 interface HoldingOverlayProps {
@@ -24,13 +24,23 @@ interface HoldingOverlayProps {
 export function HoldingOverlay({ position, onPanicSell, isSelling }: HoldingOverlayProps) {
   const pnlState = useGameStore((s) => s.pnlState)
   const safeMode = useAppStore((s) => s.safeMode)
+  const isSellDisabled = useAppStore(selectIsSellDisabled)
   
   const isPositive = position.unrealizedPnl >= 0
   const pnlColor = isPositive ? 'text-neon-green' : 'text-neon-pink'
   const pnlBgColor = isPositive ? 'from-neon-green/20' : 'from-neon-pink/20'
 
+  // Button is disabled if selling or kill switch active
+  const isButtonDisabled = isSelling || isSellDisabled
+
   const handlePanicSell = () => {
-    if (isSelling) return
+    if (isButtonDisabled) {
+      if (isSellDisabled) {
+        haptic.notification('error')
+        console.log('[KillSwitch] Sell disabled - blocking panic sell button')
+      }
+      return
+    }
     haptic.impact('heavy')
     onPanicSell()
   }
@@ -111,15 +121,22 @@ export function HoldingOverlay({ position, onPanicSell, isSelling }: HoldingOver
         <div className="relative z-10 p-6 pb-safe">
           <motion.button
             onClick={handlePanicSell}
-            disabled={isSelling}
+            disabled={isButtonDisabled}
             className={`w-full py-5 rounded-xl font-black italic text-xl uppercase tracking-wider flex items-center justify-center gap-3 transition-all ${
-              isSelling 
-                ? 'bg-dope-surface text-dope-muted cursor-not-allowed'
-                : 'bg-neon-pink text-white shadow-[0_0_30px_rgba(255,51,102,0.4)] hover:shadow-[0_0_50px_rgba(255,51,102,0.6)] active:scale-95'
+              isSellDisabled
+                ? 'bg-orange-500/20 border-2 border-orange-500/50 text-orange-400 cursor-not-allowed'
+                : isSelling 
+                  ? 'bg-dope-surface text-dope-muted cursor-not-allowed'
+                  : 'bg-neon-pink text-white shadow-[0_0_30px_rgba(255,51,102,0.4)] hover:shadow-[0_0_50px_rgba(255,51,102,0.6)] active:scale-95'
             }`}
-            whileTap={isSelling ? {} : { scale: 0.95 }}
+            whileTap={isButtonDisabled ? {} : { scale: 0.95 }}
           >
-            {isSelling ? (
+            {isSellDisabled ? (
+              <>
+                <ShieldOff size={24} />
+                Sell Paused
+              </>
+            ) : isSelling ? (
               <>
                 <motion.div
                   className="w-6 h-6 border-3 border-dope-muted border-t-white rounded-full"
@@ -137,7 +154,11 @@ export function HoldingOverlay({ position, onPanicSell, isSelling }: HoldingOver
           </motion.button>
 
           {/* Warning text */}
-          {pnlState === 'STALE' && (
+          {isSellDisabled ? (
+            <p className="text-center text-xs text-orange-400 mt-3 font-mono">
+              ⚠️ Selling is temporarily paused. Please check back soon.
+            </p>
+          ) : pnlState === 'STALE' && (
             <p className="text-center text-xs text-neon-yellow mt-3 font-mono">
               ⚠️ Price data delayed — sell may execute at different price
             </p>
