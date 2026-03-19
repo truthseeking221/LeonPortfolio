@@ -1,0 +1,30 @@
+{
+  "name": "leon-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Leon Nguyen — Designer & Developer Portfolio",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "framer": "unframer 35026f80cf201b0d --outDir src/framer"
+  },
+  "dependencies": {
+    "@motionone/dom": "^10.13.1",
+    "dompurify": "^3.0.6",
+    "react": "latest",
+    "react-dom": "latest",
+    "unframer": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "latest",
+    "vite": "^5.4.21"
+  }
+}
