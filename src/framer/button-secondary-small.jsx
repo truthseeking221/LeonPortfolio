@@ -19,6 +19,7 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Blue / Orange - Desktop' | 'White / Orange - Desktop' | 'White / Blue - Desktop' // Variant
 }} Props
 
  */

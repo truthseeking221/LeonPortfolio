@@ -19,6 +19,15 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * text?: string // Text
+ * font?: undefined // font
+ * textColor?: string // textColor
+ * startOffset?: number // Start Offset
+ * endOffset?: number // End Offset
+ * stiffness?: number // Stiffness
+ * damping?: number // Damping
+ * startOpacity?: number // Start Opacity
+ * endOpacity?: number // End Opacity
 }} Props
 
  */
@@ -86,7 +95,7 @@ function Reveal(props) {
 		offset: [`start ${props.startOffset}`, `end ${props.endOffset}`],
 	});
 	return (
-	<h2
+		<p
 			ref={ref}
 			style={{
 				...props.font,
@@ -111,7 +120,7 @@ function Reveal(props) {
 					/>
 				);
 			})}
-		</h2>
+		</p>
 	);
 }
 addPropertyControls(Reveal, {

@@ -19,6 +19,8 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop + Tablet' | 'Phone' // Variant
+ * buttonTitle?: string // Button Title
 }} Props
 
  */

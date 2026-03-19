@@ -19,6 +19,8 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Fill' | 'No Fill' // Variant
+ * revealColor?: string // Reveal Color
 }} Props
 
  */

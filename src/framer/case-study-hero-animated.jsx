@@ -19,10 +19,11 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop - 1' | 'Desktop - 2' | 'Desktop - 3' | 'Tablet - 1' | 'Tablet - 2' | 'Tablet - 3' | 'Phone - 1' | 'Phone - 2' | 'Phone - 3' // Variant
 }} Props
 
  */
-import { stdin_default as stdin_default2 } from "./chunks/chunk-267UVYF3.js";
+import { stdin_default as stdin_default2 } from "./chunks/chunk-5P4TPMTP.js";
 import "./chunks/chunk-JNO5WJBK.js";
 import "./chunks/chunk-WT3LSARI.js";
 import { stdin_default } from "./chunks/chunk-JZJLK5YE.js";
@@ -32,7 +33,7 @@ import { routes } from "./chunks/chunk-YOGVINIF.js";
 import { Fragment as Fragment2 } from "react";
 import { ContextProviders } from "unframer";
 
-// /:https://framerusercontent.com/modules/v11CBNJ9LIaKrwkk7w3n/EDMhMKHMZoZe36PTgqpk/NOQTTcaif.js
+// /:https://framerusercontent.com/modules/v11CBNJ9LIaKrwkk7w3n/LILCg95Ou8I1wCrbzkTG/NOQTTcaif.js
 import { jsx as _jsx, Fragment as _Fragment } from "react/jsx-runtime";
 import {
 	addFonts,

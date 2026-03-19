@@ -19,6 +19,8 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Case Study - 1' | 'Case Study - 2' | 'Case Study - 3' | 'Blog - 1' | 'Blog - 2' | 'Blog - 3' | 'Blog - 4' // Variant
+ * radius?: undefined // Radius
 }} Props
 
  */

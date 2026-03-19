@@ -19,6 +19,8 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Line Animation' | 'Line Animation Active' // Variant
+ * background?: string // Background
 }} Props
 
  */

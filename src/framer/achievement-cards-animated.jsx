@@ -19,6 +19,7 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Default - (Desktop + Tablet)' | '1 - (Desktop + Tablet)' | '2 - (Desktop + Tablet)' | '3 - (Desktop + Tablet)' | '4 - (Desktop + Tablet)' | '5 - (Desktop + Tablet)' | 'Default - (Phone)' | '1 - (Phone)' | '2 - (Phone)' | '3 - (Phone)' | '4 - (Phone)' | '5 - (Phone)' // Variant
 }} Props
 
  */

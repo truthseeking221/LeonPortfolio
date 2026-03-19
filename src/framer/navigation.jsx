@@ -19,6 +19,15 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Default - Desktop' | 'Home - Desktop' | 'About - Desktop' | 'Case Study - Desktop' | 'Blogs - Desktop' | 'Contact - Desktop' | 'Default - Tablet (Close)' | 'Default - Tablet (Open)' | 'Home - Tablet (Close)' | 'Home - Tablet (Open)' | 'About - Tablet (Close)' | 'About - Tablet (Open)' | 'Case Study - Tablet (Close)' | 'Case Study - Tablet (Open)' | 'Blogs - Tablet (Close)' | 'Blogs - Tablet (Open)' | 'Contact - Tablet (Close)' | 'Contact - Tablet (Open)' | 'Default - Phone (Close)' | 'Default - Phone (Open)' | 'Home - Phone (Close)' | 'Home - Phone (Open)' | 'About - Phone (Close)' | 'About - Phone (Open)' | 'Case Study - Phone (Close)' | 'Case Study - Phone (Open)' | 'Blogs - Phone (Close)' | 'Blogs - Phone (Open)' | 'Contact - Phone (Close)' | 'Contact - Phone (Open)' // Variant
+ * home?: string // Home
+ * about?: string // About
+ * works?: string // Works
+ * blog?: string // Blog
+ * contact?: string // Contact
+ * mailAddress?: string // Mail Address
+ * onzKZZi2uKlChange?: undefined // onzKZZi2uKlChange
+ * mailLink?: string // Mail Link
 }} Props
 
  */
@@ -1927,7 +1936,7 @@ var Component3 = /* @__PURE__ */ React3.forwardRef(function (props, ref) {
 							<RichText
 								__fromCanvasComponent={true}
 								className={"framer-1ns3mhy"}
-								fonts={[]}
+								fonts={["BI;Coconat/Bold/v0"]}
 								layoutDependency={layoutDependency}
 								layoutId={"M6ARvktrz"}
 								style={{
@@ -1941,7 +1950,7 @@ var Component3 = /* @__PURE__ */ React3.forwardRef(function (props, ref) {
 										dir={"auto"}
 										style={{
 											"--font-selector": "Qkk7Q29jb25hdC9Cb2xkL3Yw",
-											"--framer-font-family": '"CoconatLocal", sans-serif',
+											"--framer-font-family": '"Coconat", sans-serif',
 											"--framer-font-size": "21px",
 											"--framer-font-weight": "700",
 											"--framer-text-color":
@@ -5211,11 +5220,11 @@ addFonts3(
 			explicitInter: true,
 			fonts: [
 				{
-					cssFamilyName: "CoconatLocal",
+					cssFamilyName: "Coconat",
 					source: "builtIn",
 					style: "normal",
-					uiFamilyName: "CoconatLocal",
-					url: "/fonts/Coconat-Regular.woff2",
+					uiFamilyName: "Coconat",
+					url: "https://framerusercontent.com/assets/Y2kSOXhA6B1yt8z1UVoVj0MSlU.woff2",
 					weight: "700",
 				},
 			],

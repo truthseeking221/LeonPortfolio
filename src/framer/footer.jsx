@@ -19,6 +19,7 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop' | 'Tablet' | 'Phone' // Variant
 }} Props
 
  */
@@ -276,7 +277,7 @@ var Component = /* @__PURE__ */ React.forwardRef(function (props, ref) {
 											<RichText
 												__fromCanvasComponent={true}
 												className={"framer-15d55zp"}
-												fonts={[]}
+												fonts={["BI;Coconat/Regular/v0"]}
 												layoutDependency={layoutDependency}
 												layoutId={"rXmL5MKGH"}
 												style={{
@@ -293,7 +294,7 @@ var Component = /* @__PURE__ */ React.forwardRef(function (props, ref) {
 														dir={"auto"}
 														style={{
 															"--font-selector": "Qkk7Q29jb25hdC9SZWd1bGFyL3Yw",
-															"--framer-font-family": '"CoconatLocal", sans-serif',
+															"--framer-font-family": '"Coconat", sans-serif',
 															"--framer-font-size": "48px",
 															"--framer-text-color":
 																"var(--extracted-r6o4lv, rgb(255, 255, 255))",
@@ -305,7 +306,7 @@ var Component = /* @__PURE__ */ React.forwardRef(function (props, ref) {
 														dir={"auto"}
 														style={{
 															"--font-selector": "Qkk7Q29jb25hdC9SZWd1bGFyL3Yw",
-															"--framer-font-family": '"CoconatLocal", sans-serif',
+															"--framer-font-family": '"Coconat", sans-serif',
 															"--framer-font-size": "48px",
 															"--framer-text-color":
 																"var(--extracted-2gxw0f, rgb(255, 255, 255))",
@@ -846,11 +847,11 @@ addFonts(
 			explicitInter: true,
 			fonts: [
 				{
-					cssFamilyName: "CoconatLocal",
+					cssFamilyName: "Coconat",
 					source: "builtIn",
 					style: "normal",
-					uiFamilyName: "CoconatLocal",
-					url: "/fonts/Coconat-Regular.woff2",
+					uiFamilyName: "Coconat",
+					url: "https://framerusercontent.com/assets/ajqZQvqHcHYfzV6VYjZCsDHG6kM.woff2",
 					weight: "400",
 				},
 				{

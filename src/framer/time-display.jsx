@@ -19,6 +19,20 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * backgroundFill?: boolean // Background Fill
+ * background?: string // Background
+ * padding?: number // Padding
+ * gap?: number // Gap
+ * showLocation?: boolean // Show Location
+ * showTime?: boolean // Show Time
+ * timeFormat?: '12 Hour' | '24 Hour' // Time Format
+ * showSeconds?: boolean // Show Seconds
+ * showDate?: boolean // Show Date
+ * dateFormat?: 'Short' | 'Long' | 'Numeric' // Date Format
+ * timeColor?: string // Time Color
+ * locationColor?: string // Location Color
+ * timeFont?: undefined // Time Font
+ * locationFont?: undefined // Location Font
 }} Props
 
  */

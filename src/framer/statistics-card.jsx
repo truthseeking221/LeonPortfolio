@@ -19,6 +19,14 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop + Tablet' | 'Phone' // Variant
+ * number?: string // Number
+ * title?: string // Title
+ * radius?: undefined // Radius
+ * starLeftTop?: boolean // Star Left top
+ * starLeftBottom?: boolean // Star Left bottom
+ * starRightTop?: boolean // Star Right top
+ * starRightBottom?: boolean // Star Right bottom
 }} Props
 
  */

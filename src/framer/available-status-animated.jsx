@@ -19,6 +19,7 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: '1' | '2' | '3' // Variant
 }} Props
 
  */

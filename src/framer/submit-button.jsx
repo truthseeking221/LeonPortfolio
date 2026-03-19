@@ -19,6 +19,7 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Default' | 'Loading' | 'Disabled' | 'Success' | 'Error' // Variant
 }} Props
 
  */

@@ -19,6 +19,15 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Features - Desktop' | 'Location - Deaktop' | 'Time- Desktop' | 'Availability - Desktop' | 'Blank - Desktop' | 'Features - Tablet' | 'Location - Tablet' | 'Time- Tablet' | 'Availability - Tablet' | 'Blank - Tablet' // Variant
+ * starLeftTopVisible?: boolean // Star left top Visible
+ * ong6sUgTSXFChange?: undefined // ong6sUgTSXFChange
+ * starRightTopVisible?: boolean // Star Right top Visible
+ * onpKfZ5d16KCHange?: undefined // onpKfZ5d16KCHange
+ * starLeftBottomVisible?: boolean // Star left bottom Visible
+ * onoqZxZyQk3Change?: undefined // onoqZxZyQk3Change
+ * starRightBottomVisible?: boolean // Star Right bottom Visible
+ * onrDvuQE1CmChange?: undefined // onrDvuQE1CmChange
 }} Props
 
  */
@@ -1176,7 +1185,7 @@ var Component = /* @__PURE__ */ React.forwardRef(function (props, ref) {
 													{
 														FTnS9Q99N: {
 															locationFont: {
-																fontFamily: '"CoconatLocal", sans-serif',
+																fontFamily: '"Coconat", sans-serif',
 																fontSize: "16px",
 																fontStyle: "normal",
 																fontWeight: 400,
@@ -1185,7 +1194,7 @@ var Component = /* @__PURE__ */ React.forwardRef(function (props, ref) {
 															},
 															showTime: false,
 															timeFont: {
-																fontFamily: '"CoconatLocal", sans-serif',
+																fontFamily: '"Coconat", sans-serif',
 																fontSize: "16px",
 																fontStyle: "normal",
 																fontWeight: 400,
@@ -1197,7 +1206,7 @@ var Component = /* @__PURE__ */ React.forwardRef(function (props, ref) {
 															showLocation: false,
 															showSeconds: false,
 															timeFont: {
-																fontFamily: '"CoconatLocal", sans-serif',
+																fontFamily: '"Coconat", sans-serif',
 																fontSize: "16px",
 																fontStyle: "normal",
 																fontWeight: 400,
@@ -1207,7 +1216,7 @@ var Component = /* @__PURE__ */ React.forwardRef(function (props, ref) {
 														},
 														XzoslglRt: {
 															locationFont: {
-																fontFamily: '"CoconatLocal", sans-serif',
+																fontFamily: '"Coconat", sans-serif',
 																fontSize: "16px",
 																fontStyle: "normal",
 																fontWeight: 400,
@@ -1216,7 +1225,7 @@ var Component = /* @__PURE__ */ React.forwardRef(function (props, ref) {
 															},
 															showTime: false,
 															timeFont: {
-																fontFamily: '"CoconatLocal", sans-serif',
+																fontFamily: '"Coconat", sans-serif',
 																fontSize: "16px",
 																fontStyle: "normal",
 																fontWeight: 400,
@@ -1228,7 +1237,7 @@ var Component = /* @__PURE__ */ React.forwardRef(function (props, ref) {
 															showLocation: false,
 															showSeconds: false,
 															timeFont: {
-																fontFamily: '"CoconatLocal", sans-serif',
+																fontFamily: '"Coconat", sans-serif',
 																fontSize: "16px",
 																fontStyle: "normal",
 																fontWeight: 400,
@@ -1499,11 +1508,11 @@ addFonts(
 					weight: "400",
 				},
 				{
-					cssFamilyName: "CoconatLocal",
+					cssFamilyName: "Coconat",
 					source: "builtIn",
 					style: "normal",
-					uiFamilyName: "CoconatLocal",
-					url: "/fonts/Coconat-Regular.woff2",
+					uiFamilyName: "Coconat",
+					url: "https://framerusercontent.com/assets/ajqZQvqHcHYfzV6VYjZCsDHG6kM.woff2",
 					weight: "400",
 				},
 			],

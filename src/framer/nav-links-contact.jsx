@@ -19,6 +19,12 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop + Tablet' | 'Phone' // Variant
+ * title?: string // Title
+ * telephoneIcon?: boolean // Telephone Icon
+ * mailIcon?: boolean // Mail Icon
+ * link?: string // Link
+ * click?: Function // Click
 }} Props
 
  */

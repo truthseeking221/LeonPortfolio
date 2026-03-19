@@ -19,6 +19,7 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Default' | 'Invisible' | 'Visible (Default)' // Variant
 }} Props
 
  */

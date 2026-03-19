@@ -19,6 +19,8 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Blue' | 'Orange' | 'Off - White' // Variant
+ * title?: string // Title
 }} Props
 
  */

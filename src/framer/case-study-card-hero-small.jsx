@@ -19,10 +19,15 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop' | 'Tablet' | 'Phone' // Variant
+ * title?: string // Title
+ * onZRN72QnWDCHange?: undefined // onZRN72QnWDCHange
+ * image?: {src: string, srcSet?: string, alt?: string} // Image
+ * link?: string // Link
 }} Props
 
  */
-import { stdin_default } from "./chunks/chunk-267UVYF3.js";
+import { stdin_default } from "./chunks/chunk-5P4TPMTP.js";
 import "./chunks/chunk-JNO5WJBK.js";
 import "./chunks/chunk-WT3LSARI.js";
 import { routes } from "./chunks/chunk-YOGVINIF.js";

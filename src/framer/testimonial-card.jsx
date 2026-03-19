@@ -19,6 +19,10 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop + Tablet' | 'Phone' // Variant
+ * reviewerImage?: {src: string, srcSet?: string, alt?: string} // Reviewer Image
+ * reviewText?: string // Review Text
+ * name&Designation?: string // Name & Designation
 }} Props
 
  */

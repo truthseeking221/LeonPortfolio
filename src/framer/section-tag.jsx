@@ -19,6 +19,8 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Blue - Desktop' | 'White - Desktop' | 'Blue - Phone' | 'White - Phone' // Variant
+ * tagTitle?: string // Tag Title
 }} Props
 
  */

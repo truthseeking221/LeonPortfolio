@@ -19,6 +19,11 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop' | 'Tablet' | 'Phone' // Variant
+ * year?: string // Year
+ * logo?: {src: string, srcSet?: string, alt?: string} // Logo
+ * title?: string // Title
+ * subtitle?: string // Subtitle
 }} Props
 
  */

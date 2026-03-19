@@ -19,6 +19,9 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Default' | 'Step 1' | 'Step 2' // Variant
+ * radius?: undefined // Radius
+ * image?: {src: string, srcSet?: string, alt?: string} // Image
 }} Props
 
  */

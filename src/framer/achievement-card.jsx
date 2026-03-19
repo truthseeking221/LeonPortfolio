@@ -19,6 +19,13 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop + Tablet' | 'Phone' // Variant
+ * amount?: string // Amount
+ * title?: string // Title
+ * fill?: string // Fill
+ * textColor?: string // Text Color
+ * radius?: undefined // Radius
+ * bGFILlOpacity?: number // BG FIll Opacity
 }} Props
 
  */

@@ -19,6 +19,16 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop' | 'Tablet' | 'Phone' // Variant
+ * image?: {src: string, srcSet?: string, alt?: string} // Image
+ * text?: string // Text
+ * onzZjVo4iDNCHange?: undefined // onzZjVo4iDNCHange
+ * number?: string // Number
+ * ons1W_Zr6QzChange?: undefined // ons1W_Zr6QzChange
+ * numberLink?: string // Number Link
+ * mail?: string // Mail
+ * onT8wjmfFFVChange?: undefined // onT8wjmfFFVChange
+ * mailLink?: string // Mail Link
 }} Props
 
  */
@@ -329,7 +339,7 @@ var Component = /* @__PURE__ */ React.forwardRef(function (props, ref) {
 										scopeId={"oJ0HkbenH"}
 									>
 										{_jsx(stdin_default2, {
-											Epkyl0OCB: "CONTACT",
+											Epkyl0OCB: "WHAT'S NEXT?",
 											height: "100%",
 											id: "lpc8GkJar",
 											layoutId: "lpc8GkJar",
@@ -803,8 +813,8 @@ var css2 = [
 	".framer-B7zQF .framer-1sx7h1w { align-content: center; align-items: center; display: flex; flex: none; flex-direction: column; flex-wrap: nowrap; gap: 56px; height: min-content; justify-content: center; overflow: var(--overflow-clip-fallback, clip); padding: 0px; position: relative; width: 100%; }",
 	".framer-B7zQF .framer-eoeze8, .framer-B7zQF .framer-xsy7li, .framer-B7zQF .framer-15lgla8 { align-content: flex-start; align-items: flex-start; display: flex; flex: none; flex-direction: column; flex-wrap: nowrap; gap: 0px; height: min-content; justify-content: flex-start; padding: 0px; position: relative; width: 100%; }",
 	".framer-B7zQF .framer-wkm3i9, .framer-B7zQF .framer-gpjhaj, .framer-B7zQF .framer-8mv6k0 { flex: none; height: auto; position: relative; white-space: pre; width: auto; }",
-	'.framer-B7zQF .framer-imppdj, .framer-B7zQF .framer-b9fdr1 { --framer-input-focused-border-color: var(--token-1615e446-4914-429c-9d6b-de0d358636dc, #004aad); --framer-input-focused-border-style: solid; --framer-input-focused-border-width: 1px; --framer-input-font-family: "CoconatLocal"; --framer-input-font-letter-spacing: -0.04em; --framer-input-font-line-height: 160%; --framer-input-font-size: 16px; --framer-input-font-weight: 400; --framer-input-padding: 12px; --framer-input-wrapper-height: auto; flex: none; height: auto; position: relative; width: 100%; }',
-	'.framer-B7zQF .framer-1bgu75g { --framer-input-focused-border-color: var(--token-1615e446-4914-429c-9d6b-de0d358636dc, #004aad); --framer-input-focused-border-style: solid; --framer-input-focused-border-width: 1px; --framer-input-font-family: "CoconatLocal"; --framer-input-font-letter-spacing: -0.04em; --framer-input-font-line-height: 160%; --framer-input-font-size: 16px; --framer-input-font-weight: 400; --framer-input-padding: 12px; --framer-input-wrapper-height: auto; --framer-textarea-resize: vertical; flex: none; height: auto; min-height: 100px; position: relative; width: 100%; }',
+	'.framer-B7zQF .framer-imppdj, .framer-B7zQF .framer-b9fdr1 { --framer-input-focused-border-color: var(--token-1615e446-4914-429c-9d6b-de0d358636dc, #004aad); --framer-input-focused-border-style: solid; --framer-input-focused-border-width: 1px; --framer-input-font-family: "Coconat"; --framer-input-font-letter-spacing: -0.04em; --framer-input-font-line-height: 160%; --framer-input-font-size: 16px; --framer-input-font-weight: 400; --framer-input-padding: 12px; --framer-input-wrapper-height: auto; flex: none; height: auto; position: relative; width: 100%; }',
+	'.framer-B7zQF .framer-1bgu75g { --framer-input-focused-border-color: var(--token-1615e446-4914-429c-9d6b-de0d358636dc, #004aad); --framer-input-focused-border-style: solid; --framer-input-focused-border-width: 1px; --framer-input-font-family: "Coconat"; --framer-input-font-letter-spacing: -0.04em; --framer-input-font-line-height: 160%; --framer-input-font-size: 16px; --framer-input-font-weight: 400; --framer-input-padding: 12px; --framer-input-wrapper-height: auto; --framer-textarea-resize: vertical; flex: none; height: auto; min-height: 100px; position: relative; width: 100%; }',
 	".framer-B7zQF.framer-v-1qoexp.framer-n69e4q { width: 738px; }",
 	".framer-B7zQF.framer-v-1qoexp .framer-12ki6j0, .framer-B7zQF.framer-v-wb7gmj .framer-12ki6j0 { align-content: flex-start; align-items: flex-start; flex-direction: column; }",
 	".framer-B7zQF.framer-v-1qoexp .framer-c8bn0a, .framer-B7zQF.framer-v-wb7gmj .framer-c8bn0a { flex: none; width: 80%; }",
@@ -949,11 +959,11 @@ addFonts(
 					weight: "400",
 				},
 				{
-					cssFamilyName: "CoconatLocal",
+					cssFamilyName: "Coconat",
 					source: "builtIn",
 					style: "normal",
-					uiFamilyName: "CoconatLocal",
-					url: "/fonts/Coconat-Regular.woff2",
+					uiFamilyName: "Coconat",
+					url: "https://framerusercontent.com/assets/ajqZQvqHcHYfzV6VYjZCsDHG6kM.woff2",
 					weight: "400",
 				},
 			],

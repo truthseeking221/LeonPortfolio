@@ -19,6 +19,8 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Menu' | 'Cross' // Variant
+ * menu?: Function // Menu
 }} Props
 
  */

@@ -19,6 +19,8 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * buttonTitle?: string // Button Title
+ * link?: string // Link
 }} Props
 
  */

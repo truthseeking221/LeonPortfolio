@@ -19,6 +19,7 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop + Tablet' | 'Phone - Open 1 (No Effect Helper)' | 'Phone - Open 1' | 'Phone - Open 2' | 'Phone - Open 3' | 'Phone - Open 4' // Variant
 }} Props
 
  */

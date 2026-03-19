@@ -19,6 +19,10 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Default - Desktop + Tablet' | 'Active' | 'Default - Phone' // Variant
+ * title?: string // Title
+ * link?: string // Link
+ * click?: Function // Click
 }} Props
 
  */

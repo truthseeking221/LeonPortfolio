@@ -19,6 +19,13 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Desktop' | 'Tablet' | 'Phone' // Variant
+ * year?: string // Year
+ * projectType?: string // Project Type
+ * title?: string // Title
+ * cardImage?: {src: string, srcSet?: string, alt?: string} // Card Image
+ * bGFill?: string // BG Fill
+ * link?: string // Link
 }} Props
 
  */

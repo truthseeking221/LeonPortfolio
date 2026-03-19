@@ -19,6 +19,12 @@
  * width?: any
  * height?: any
  * layoutId?: string
+ * variant?: 'Close - Desktop + Tablet' | 'Open - Desktop + Tablet' | 'Close - Phone' | 'Open - Phone' // Variant
+ * serial?: string // Serial
+ * title?: string // Title
+ * subtitle?: string // Subtitle
+ * image?: {src: string, srcSet?: string, alt?: string} // Image
+ * click?: Function // Click
 }} Props
 
  */
